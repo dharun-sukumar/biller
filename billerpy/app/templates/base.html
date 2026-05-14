@@ -1,0 +1,211 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>BluBiller - {% block title %}Dashboard{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#197fe6",
+              "background-light": "#f6f7f8",
+              "background-dark": "#111921",
+              "surface-dark": "#1a2530",
+              "border-dark": "#2d3a4b",
+            },
+            fontFamily: {
+              display: ["Manrope", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        font-family: "Manrope", sans-serif;
+      }
+
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #2d3a4b;
+        border-radius: 10px;
+      }
+
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #197fe6;
+      }
+
+      /* Calendar Icon Styling */
+      .calendar-white-icon::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <body
+    class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display transition-colors duration-300"
+  >
+    <div class="flex h-screen overflow-hidden">
+      <!-- Left Vertical Navigation Rail -->
+      <aside
+        class="w-64 flex-shrink-0 bg-white dark:bg-surface-dark border-r border-slate-200 dark:border-border-dark flex flex-col"
+      >
+        <div class="p-6 flex items-center gap-3">
+          <div
+            class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center"
+          >
+            <span class="material-icons-round text-white text-xl"
+              >account_balance</span
+            >
+          </div>
+          <h1
+            class="text-xl font-bold tracking-tight text-slate-800 dark:text-white"
+          >
+            BluBiller
+          </h1>
+        </div>
+        <nav class="flex-1 px-4 space-y-1 mt-4">
+          <a
+            class="flex items-center gap-3 px-3 py-2.5 {% if request.url.path == '/' %}bg-primary/10 text-primary{% else %}text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800{% endif %} rounded-lg font-medium transition-colors"
+            href="/"
+          >
+            <span class="material-icons-round">dashboard</span>
+            Dashboard
+          </a>
+          <a
+            class="flex items-center gap-3 px-3 py-2.5 {% if '/clients' in request.url.path %}bg-primary/10 text-primary{% else %}text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800{% endif %} rounded-lg font-medium transition-colors"
+            href="/clients"
+          >
+            <span class="material-icons-round">groups</span>
+            Clients
+          </a>
+          <a
+            class="flex items-center gap-3 px-3 py-2.5 {% if '/invoices' in request.url.path %}bg-primary/10 text-primary{% else %}text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800{% endif %} rounded-lg font-medium transition-colors"
+            href="/invoices"
+          >
+            <span class="material-icons-round">description</span>
+            Invoices
+          </a>
+          <a
+            class="flex items-center gap-3 px-3 py-2.5 {% if '/expenses' in request.url.path %}bg-primary/10 text-primary{% else %}text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800{% endif %} rounded-lg font-medium transition-colors"
+            href="/expenses"
+          >
+            <span class="material-icons-round">receipt_long</span>
+            Expenses
+          </a>
+          <a
+            class="flex items-center gap-3 px-3 py-2.5 {% if '/services' in request.url.path %}bg-primary/10 text-primary{% else %}text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800{% endif %} rounded-lg font-medium transition-colors"
+            href="/services"
+          >
+            <span class="material-icons-round">design_services</span>
+            Services
+          </a>
+        </nav>
+        <div class="p-4 border-t border-slate-200 dark:border-border-dark">
+          <a
+            class="flex items-center gap-3 px-3 py-2.5 {% if '/profile' in request.url.path %}bg-primary/10 text-primary{% else %}text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800{% endif %} rounded-lg font-medium transition-colors"
+            href="/profile"
+          >
+            <span class="material-icons-round">settings</span>
+            Settings
+          </a>
+          <div class="mt-4 flex items-center gap-3 px-3">
+            <div
+              class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden"
+            >
+              <img
+                alt="Auditor"
+                class="w-full h-full object-cover"
+                src="https://ui-avatars.com/api/?name={{ (company_settings.company_name or 'Admin User')|urlencode }}&background=random"
+              />
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-semibold truncate">
+                {{ company_settings.company_name or 'Admin User' }}
+              </p>
+              <p class="text-xs text-slate-500 dark:text-slate-400 truncate">
+                Administrator
+              </p>
+            </div>
+          </div>
+        </div>
+      </aside>
+      <!-- Main Content Area -->
+      <main class="flex-1 flex flex-col overflow-hidden">
+        <!-- Top Utility Bar -->
+        <header
+          class="h-16 flex-shrink-0 bg-white dark:bg-surface-dark border-b border-slate-200 dark:border-border-dark flex items-center justify-between px-8"
+        >
+          <div class="flex items-center flex-1 max-w-2xl">
+            {% set current_path = request.url.path.rstrip('/') %} {% if
+            current_path in ['/invoices', '/clients'] %}
+            <div class="relative w-full">
+              <span
+                class="material-icons-round absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                >search</span
+              >
+              <input
+                id="globalSearch"
+                class="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-background-dark border-none rounded-lg text-sm focus:ring-2 focus:ring-primary focus:bg-white dark:focus:bg-background-dark transition-all"
+                placeholder="Search..."
+                type="text"
+              />
+            </div>
+            {% endif %}
+          </div>
+          <div class="flex items-center gap-4">
+            {% if current_path == '/invoices' %}
+            <div
+              class="flex items-center bg-slate-100 dark:bg-background-dark rounded-lg px-3 py-2 border border-slate-200 dark:border-border-dark"
+            >
+              <span class="material-icons-round text-sm text-slate-400 mr-2"
+                >calendar_today</span
+              >
+              <input
+                id="dateRangeInput"
+                type="date"
+                class="bg-transparent border-none text-xs font-medium focus:ring-0 cursor-pointer calendar-white-icon p-0"
+              />
+            </div>
+            {% endif %}
+          </div>
+        </header>
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-y-auto custom-scrollbar p-8">
+          {% block content %}{% endblock %}
+        </div>
+      </main>
+    </div>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

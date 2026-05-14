@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AuditPro Financial Reports</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "primary": "#197fe6",
+                "background-light": "#f6f7f8",
+                "background-dark": "#111921",
+                "surface-dark": "#1a242f",
+                "border-dark": "#2d3a4b",
+              },
+              fontFamily: {
+                "display": ["Manrope"]
+              },
+              borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            },
+          },
+        }
+      </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #2d3a4b; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #197fe6; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display min-h-screen flex overflow-hidden">
+<!-- Sidebar Navigation -->
+<aside class="w-64 border-r border-slate-200 dark:border-border-dark flex flex-col bg-white dark:bg-surface-dark shrink-0">
+<div class="p-6 flex items-center gap-3">
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+<span class="material-icons text-white text-xl">account_balance</span>
+</div>
+<h1 class="font-bold text-lg tracking-tight">AuditPro</h1>
+</div>
+<nav class="flex-1 px-4 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-primary/10 transition-colors" href="#">
+<span class="material-icons text-xl">dashboard</span>
+<span class="text-sm font-medium">Overview</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-primary/10 transition-colors" href="#">
+<span class="material-icons text-xl">description</span>
+<span class="text-sm font-medium">Invoices</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary" href="#">
+<span class="material-icons text-xl">bar_chart</span>
+<span class="text-sm font-medium">Reports</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-primary/10 transition-colors" href="#">
+<span class="material-icons text-xl">people</span>
+<span class="text-sm font-medium">Clients</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-primary/10 transition-colors" href="#">
+<span class="material-icons text-xl">account_tree</span>
+<span class="text-sm font-medium">GST Logs</span>
+</a>
+</nav>
+<div class="p-4 mt-auto">
+<div class="bg-slate-100 dark:bg-border-dark/30 rounded-xl p-4">
+<p class="text-[10px] uppercase font-bold text-slate-500 tracking-wider mb-2">System Status</p>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<span class="text-xs font-medium">All systems operational</span>
+</div>
+</div>
+<div class="mt-4 flex items-center gap-3 px-2">
+<div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Professional auditor profile headshot" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBcwM1H5jh4e2HSZ5_WS4qFYGSXNRHt9hQwHTzcTOxbkAYu5nOMR9Ne46HJYUXXdpg1_s3TsYQF0dNJjQtpOEdSMb55IEtbhx85lZyVPNDmJw4KRGZ7S9sgNnTrAy63AyM8_02vE7w_RqxCQExlqhr6fAOjuVzYQA_bb3dRoj44zvjXI5iAPZpFBAn2PZcXZnPviPxnoPcTfF9GNu2jKfb8FV_AObL3X36Nd4TOsvFXZne1cS4s74h7AgyvnFrG-GOZxtLyywIT2g8"/>
+</div>
+<div>
+<p class="text-xs font-bold">John Miller, CPA</p>
+<p class="text-[10px] text-slate-500">License #88219</p>
+</div>
+<button class="ml-auto text-slate-500"><span class="material-icons text-sm">settings</span></button>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col min-w-0 overflow-hidden">
+<!-- Top Utility Bar -->
+<header class="h-16 border-b border-slate-200 dark:border-border-dark bg-white dark:bg-surface-dark flex items-center justify-between px-8 shrink-0">
+<div class="flex items-center gap-4">
+<h2 class="font-bold text-lg">Financial Reports</h2>
+<div class="h-4 w-[1px] bg-slate-200 dark:bg-border-dark"></div>
+<div class="flex items-center gap-2 bg-slate-50 dark:bg-background-dark border border-slate-200 dark:border-border-dark rounded-lg px-3 py-1.5">
+<span class="material-icons text-slate-400 text-sm">calendar_today</span>
+<span class="text-xs font-medium">Apr 01, 2023 - Mar 31, 2024</span>
+<span class="material-icons text-slate-400 text-sm">expand_more</span>
+</div>
+<div class="flex gap-1">
+<button class="px-3 py-1 text-[11px] font-bold rounded-md bg-slate-100 dark:bg-border-dark text-slate-600 dark:text-slate-300">Q1</button>
+<button class="px-3 py-1 text-[11px] font-bold rounded-md bg-slate-100 dark:bg-border-dark text-slate-600 dark:text-slate-300">Q2</button>
+<button class="px-3 py-1 text-[11px] font-bold rounded-md bg-primary text-white">Annual</button>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="flex items-center gap-2 px-4 py-2 border border-slate-200 dark:border-border-dark rounded-lg text-sm font-semibold hover:bg-slate-50 dark:hover:bg-border-dark transition-colors">
+<span class="material-icons text-sm">picture_as_pdf</span>
+                    Download PDF
+                </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all">
+<span class="material-icons text-sm">file_download</span>
+                    Export to Excel
+                </button>
+</div>
+</header>
+<!-- Scrollable Dashboard Content -->
+<div class="flex-1 overflow-y-auto custom-scrollbar bg-background-light dark:bg-background-dark p-8">
+<div class="max-w-[1400px] mx-auto space-y-6">
+<!-- Stat Cards -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<div class="bg-white dark:bg-surface-dark p-5 rounded-xl border border-slate-200 dark:border-border-dark">
+<p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Total Revenue</p>
+<div class="flex items-baseline gap-2 mt-1">
+<h3 class="text-2xl font-extrabold">$1,248,500</h3>
+<span class="text-emerald-500 text-xs font-bold flex items-center"><span class="material-icons text-[10px]">arrow_upward</span>12%</span>
+</div>
+</div>
+<div class="bg-white dark:bg-surface-dark p-5 rounded-xl border border-slate-200 dark:border-border-dark">
+<p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Total Expenses</p>
+<div class="flex items-baseline gap-2 mt-1">
+<h3 class="text-2xl font-extrabold">$842,200</h3>
+<span class="text-rose-500 text-xs font-bold flex items-center"><span class="material-icons text-[10px]">arrow_upward</span>5%</span>
+</div>
+</div>
+<div class="bg-white dark:bg-surface-dark p-5 rounded-xl border border-slate-200 dark:border-border-dark">
+<p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Net Profit</p>
+<div class="flex items-baseline gap-2 mt-1">
+<h3 class="text-2xl font-extrabold">$406,300</h3>
+<span class="text-emerald-500 text-xs font-bold flex items-center"><span class="material-icons text-[10px]">arrow_upward</span>18%</span>
+</div>
+</div>
+<div class="bg-white dark:bg-surface-dark p-5 rounded-xl border border-slate-200 dark:border-border-dark">
+<p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Net GST Payable</p>
+<div class="flex items-baseline gap-2 mt-1">
+<h3 class="text-2xl font-extrabold">$74,890</h3>
+<span class="text-slate-400 text-xs font-bold">Pending Filing</span>
+</div>
+</div>
+</div>
+<!-- Visual Analytics Layer -->
+<div class="grid grid-cols-3 gap-6">
+<div class="col-span-2 bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-6">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h4 class="font-bold text-base">Revenue vs Expense Trend</h4>
+<p class="text-xs text-slate-500">Monthly breakdown for Fiscal Year 2023-24</p>
+</div>
+<div class="flex gap-4">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+<span class="text-[10px] font-bold text-slate-500">REVENUE</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+<span class="text-[10px] font-bold text-slate-500">EXPENSE</span>
+</div>
+</div>
+</div>
+<!-- Simulated Bar Chart -->
+<div class="h-64 flex items-end justify-between gap-4 px-2">
+<div class="flex-1 flex flex-col justify-end items-center gap-1 group">
+<div class="w-full flex justify-center gap-1 items-end h-full">
+<div class="w-4 bg-primary rounded-t opacity-80" style="height: 60%"></div>
+<div class="w-4 bg-slate-300 dark:bg-slate-600 rounded-t" style="height: 40%"></div>
+</div>
+<span class="text-[10px] font-bold text-slate-500">APR</span>
+</div>
+<div class="flex-1 flex flex-col justify-end items-center gap-1 group">
+<div class="w-full flex justify-center gap-1 items-end h-full">
+<div class="w-4 bg-primary rounded-t opacity-80" style="height: 75%"></div>
+<div class="w-4 bg-slate-300 dark:bg-slate-600 rounded-t" style="height: 45%"></div>
+</div>
+<span class="text-[10px] font-bold text-slate-500">MAY</span>
+</div>
+<div class="flex-1 flex flex-col justify-end items-center gap-1 group">
+<div class="w-full flex justify-center gap-1 items-end h-full">
+<div class="w-4 bg-primary rounded-t opacity-80" style="height: 55%"></div>
+<div class="w-4 bg-slate-300 dark:bg-slate-600 rounded-t" style="height: 38%"></div>
+</div>
+<span class="text-[10px] font-bold text-slate-500">JUN</span>
+</div>
+<div class="flex-1 flex flex-col justify-end items-center gap-1 group">
+<div class="w-full flex justify-center gap-1 items-end h-full">
+<div class="w-4 bg-primary rounded-t opacity-80" style="height: 90%"></div>
+<div class="w-4 bg-slate-300 dark:bg-slate-600 rounded-t" style="height: 50%"></div>
+</div>
+<span class="text-[10px] font-bold text-slate-500">JUL</span>
+</div>
+<div class="flex-1 flex flex-col justify-end items-center gap-1 group">
+<div class="w-full flex justify-center gap-1 items-end h-full">
+<div class="w-4 bg-primary rounded-t opacity-80" style="height: 82%"></div>
+<div class="w-4 bg-slate-300 dark:bg-slate-600 rounded-t" style="height: 42%"></div>
+</div>
+<span class="text-[10px] font-bold text-slate-500">AUG</span>
+</div>
+<div class="flex-1 flex flex-col justify-end items-center gap-1 group">
+<div class="w-full flex justify-center gap-1 items-end h-full">
+<div class="w-4 bg-primary rounded-t opacity-80" style="height: 95%"></div>
+<div class="w-4 bg-slate-300 dark:bg-slate-600 rounded-t" style="height: 55%"></div>
+</div>
+<span class="text-[10px] font-bold text-slate-500">SEP</span>
+</div>
+<div class="flex-1 flex flex-col justify-end items-center gap-1 group">
+<div class="w-full flex justify-center gap-1 items-end h-full">
+<div class="w-4 bg-primary rounded-t opacity-80" style="height: 70%"></div>
+<div class="w-4 bg-slate-300 dark:bg-slate-600 rounded-t" style="height: 48%"></div>
+</div>
+<span class="text-[10px] font-bold text-slate-500">OCT</span>
+</div>
+<div class="flex-1 flex flex-col justify-end items-center gap-1 group">
+<div class="w-full flex justify-center gap-1 items-end h-full">
+<div class="w-4 bg-primary rounded-t opacity-80" style="height: 65%"></div>
+<div class="w-4 bg-slate-300 dark:bg-slate-600 rounded-t" style="height: 40%"></div>
+</div>
+<span class="text-[10px] font-bold text-slate-500">NOV</span>
+</div>
+<div class="flex-1 flex flex-col justify-end items-center gap-1 group">
+<div class="w-full flex justify-center gap-1 items-end h-full">
+<div class="w-4 bg-primary rounded-t opacity-80" style="height: 88%"></div>
+<div class="w-4 bg-slate-300 dark:bg-slate-600 rounded-t" style="height: 52%"></div>
+</div>
+<span class="text-[10px] font-bold text-slate-500">DEC</span>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark p-6">
+<h4 class="font-bold text-base mb-6">GST Breakdown</h4>
+<div class="space-y-6">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-2 h-8 bg-blue-500 rounded-full"></div>
+<div>
+<p class="text-[11px] font-bold text-slate-500 uppercase">CGST (Central)</p>
+<p class="text-lg font-bold">$34,220.00</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-xs font-semibold text-slate-400">46%</p>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-2 h-8 bg-indigo-500 rounded-full"></div>
+<div>
+<p class="text-[11px] font-bold text-slate-500 uppercase">SGST (State)</p>
+<p class="text-lg font-bold">$34,220.00</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-xs font-semibold text-slate-400">46%</p>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-2 h-8 bg-violet-500 rounded-full"></div>
+<div>
+<p class="text-[11px] font-bold text-slate-500 uppercase">IGST (Integrated)</p>
+<p class="text-lg font-bold">$6,450.00</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-xs font-semibold text-slate-400">8%</p>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-6 border-t border-slate-100 dark:border-border-dark">
+<div class="bg-primary/5 rounded-lg p-4 border border-primary/20">
+<div class="flex items-center gap-2 mb-1">
+<span class="material-icons text-primary text-sm">info</span>
+<span class="text-[11px] font-bold text-primary uppercase">Filing Advice</span>
+</div>
+<p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">Tax liability for Q3 is 14% higher than previous period. Review input tax credit before filing.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- GST Summary Data Grid -->
+<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark overflow-hidden">
+<div class="p-6 border-b border-slate-200 dark:border-border-dark flex items-center justify-between bg-slate-50/50 dark:bg-border-dark/10">
+<div class="flex items-center gap-4">
+<h4 class="font-bold text-base">GST Transaction Detail</h4>
+<div class="flex items-center bg-white dark:bg-background-dark border border-slate-200 dark:border-border-dark rounded-md px-3 py-1.5 w-64">
+<span class="material-icons text-slate-400 text-sm">search</span>
+<input class="bg-transparent border-none text-[12px] focus:ring-0 w-full placeholder:text-slate-500" placeholder="Search by Client or GSTIN..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-400 bg-white dark:bg-background-dark border border-slate-200 dark:border-border-dark rounded-md">
+<span class="material-icons text-xs">filter_list</span>
+                                Columns
+                            </button>
+<button class="flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-400 bg-white dark:bg-background-dark border border-slate-200 dark:border-border-dark rounded-md">
+<span class="material-icons text-xs">sort</span>
+                                Sort
+                            </button>
+</div>
+</div>
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left text-xs border-collapse">
+<thead>
+<tr class="bg-slate-50 dark:bg-border-dark/20 text-slate-500 font-bold border-b border-slate-200 dark:border-border-dark">
+<th class="px-6 py-4 uppercase tracking-wider">Date</th>
+<th class="px-6 py-4 uppercase tracking-wider">Client Name</th>
+<th class="px-6 py-4 uppercase tracking-wider">GSTIN</th>
+<th class="px-6 py-4 uppercase tracking-wider text-right">Taxable Value</th>
+<th class="px-6 py-4 uppercase tracking-wider text-right">CGST</th>
+<th class="px-6 py-4 uppercase tracking-wider text-right">SGST</th>
+<th class="px-6 py-4 uppercase tracking-wider text-right">IGST</th>
+<th class="px-6 py-4 uppercase tracking-wider text-right bg-primary/5 text-primary">Total Tax</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-border-dark">
+<tr class="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors">
+<td class="px-6 py-3 font-medium">Dec 12, 2023</td>
+<td class="px-6 py-3 font-bold">Initech Global Corp</td>
+<td class="px-6 py-3 font-mono text-slate-500">27AABCI1234F1Z1</td>
+<td class="px-6 py-3 text-right font-semibold">$12,500.00</td>
+<td class="px-6 py-3 text-right text-slate-500">$1,125.00</td>
+<td class="px-6 py-3 text-right text-slate-500">$1,125.00</td>
+<td class="px-6 py-3 text-right text-slate-500">$0.00</td>
+<td class="px-6 py-3 text-right font-bold text-primary bg-primary/5">$2,250.00</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors">
+<td class="px-6 py-3 font-medium">Dec 15, 2023</td>
+<td class="px-6 py-3 font-bold">Stark Industries</td>
+<td class="px-6 py-3 font-mono text-slate-500">22AABCS8894K1Z0</td>
+<td class="px-6 py-3 text-right font-semibold">$45,000.00</td>
+<td class="px-6 py-3 text-right text-slate-500">$0.00</td>
+<td class="px-6 py-3 text-right text-slate-500">$0.00</td>
+<td class="px-6 py-3 text-right text-slate-500">$8,100.00</td>
+<td class="px-6 py-3 text-right font-bold text-primary bg-primary/5">$8,100.00</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors">
+<td class="px-6 py-3 font-medium">Dec 18, 2023</td>
+<td class="px-6 py-3 font-bold">Weyland-Yutani Inc</td>
+<td class="px-6 py-3 font-mono text-slate-500">27CCBBA4455G1Z5</td>
+<td class="px-6 py-3 text-right font-semibold">$8,200.00</td>
+<td class="px-6 py-3 text-right text-slate-500">$738.00</td>
+<td class="px-6 py-3 text-right text-slate-500">$738.00</td>
+<td class="px-6 py-3 text-right text-slate-500">$0.00</td>
+<td class="px-6 py-3 text-right font-bold text-primary bg-primary/5">$1,476.00</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors">
+<td class="px-6 py-3 font-medium">Dec 22, 2023</td>
+<td class="px-6 py-3 font-bold">Cyberdyne Systems</td>
+<td class="px-6 py-3 font-mono text-slate-500">19DDCCA7788M1Z2</td>
+<td class="px-6 py-3 text-right font-semibold">$112,000.00</td>
+<td class="px-6 py-3 text-right text-slate-500">$10,080.00</td>
+<td class="px-6 py-3 text-right text-slate-500">$10,080.00</td>
+<td class="px-6 py-3 text-right text-slate-500">$0.00</td>
+<td class="px-6 py-3 text-right font-bold text-primary bg-primary/5">$20,160.00</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors">
+<td class="px-6 py-3 font-medium">Dec 24, 2023</td>
+<td class="px-6 py-3 font-bold">Tyrell Corp</td>
+<td class="px-6 py-3 font-mono text-slate-500">27AAXY1122D1Z9</td>
+<td class="px-6 py-3 text-right font-semibold">$24,300.00</td>
+<td class="px-6 py-3 text-right text-slate-500">$2,187.00</td>
+<td class="px-6 py-3 text-right text-slate-500">$2,187.00</td>
+<td class="px-6 py-3 text-right text-slate-500">$0.00</td>
+<td class="px-6 py-3 text-right font-bold text-primary bg-primary/5">$4,374.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-6 py-4 border-t border-slate-200 dark:border-border-dark flex items-center justify-between bg-slate-50/30 dark:bg-border-dark/10">
+<span class="text-[11px] text-slate-500 font-medium">Showing 1 to 5 of 124 entries</span>
+<div class="flex items-center gap-1">
+<button class="w-8 h-8 flex items-center justify-center rounded border border-slate-200 dark:border-border-dark text-slate-500 hover:bg-slate-50 dark:hover:bg-border-dark"><span class="material-icons text-sm">chevron_left</span></button>
+<button class="w-8 h-8 flex items-center justify-center rounded bg-primary text-white text-xs font-bold">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-transparent text-slate-500 hover:bg-slate-50 dark:hover:bg-border-dark text-xs font-bold">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-transparent text-slate-500 hover:bg-slate-50 dark:hover:bg-border-dark text-xs font-bold">3</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-slate-200 dark:border-border-dark text-slate-500 hover:bg-slate-50 dark:hover:bg-border-dark"><span class="material-icons text-sm">chevron_right</span></button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Sticky Progress indicator (Export state simulation) -->
+<div class="fixed bottom-8 right-8 pointer-events-none">
+<div class="bg-surface-dark border border-primary/30 rounded-lg p-4 shadow-2xl w-64 translate-y-24 opacity-0 transition-all duration-500" id="exportStatus">
+<div class="flex items-center justify-between mb-3">
+<span class="text-[11px] font-bold text-primary uppercase">Preparing Excel</span>
+<span class="text-xs font-bold">65%</span>
+</div>
+<div class="w-full bg-border-dark h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[65%]"></div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

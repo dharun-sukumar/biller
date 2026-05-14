@@ -1,0 +1,312 @@
+{% extends "base.html" %} {% block title %}Clients{% endblock %} {% block
+content %}
+<div class="flex flex-col gap-8">
+  <!-- Add Client Form (Collapsible or visible) -->
+  <div
+    class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm"
+  >
+    <h2 class="font-bold text-lg mb-4">Add New Client</h2>
+    <form
+      action="/clients/new"
+      method="post"
+      class="grid grid-cols-1 md:grid-cols-2 gap-4"
+    >
+      <div>
+        <label
+          class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >Client Name</label
+        >
+        <input
+          required
+          name="name"
+          type="text"
+          class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary"
+        />
+      </div>
+      <div>
+        <label
+          class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >Email</label
+        >
+        <input
+          name="email"
+          type="email"
+          class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary"
+        />
+      </div>
+      <div>
+        <label
+          class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >Phone</label
+        >
+        <input
+          name="phone"
+          type="text"
+          class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary"
+        />
+      </div>
+      <div>
+        <label
+          class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >Address</label
+        >
+        <input
+          name="address"
+          type="text"
+          class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary"
+        />
+      </div>
+      <div>
+        <label
+          class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >GSTIN</label
+        >
+        <input
+          name="gstin"
+          type="text"
+          placeholder="e.g., 27AABCT1234H1Z0"
+          class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary uppercase"
+        />
+      </div>
+      <div class="md:col-span-2 flex justify-end">
+        <button
+          type="submit"
+          class="bg-primary text-white font-bold py-2.5 px-6 rounded-lg hover:bg-primary/90 transition-colors"
+        >
+          Add Client
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Clients List -->
+  <div
+    class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark shadow-sm overflow-hidden"
+  >
+    <div class="p-6 border-b border-slate-200 dark:border-border-dark">
+      <h2 class="font-bold">All Clients</h2>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse" id="clientsTable">
+        <thead>
+          <tr class="bg-slate-50 dark:bg-background-dark/50">
+            <th
+              class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider"
+            >
+              ID
+            </th>
+            <th
+              class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider"
+            >
+              Name
+            </th>
+            <th
+              class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider"
+            >
+              Email
+            </th>
+            <th
+              class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider"
+            >
+              Phone
+            </th>
+            <th
+              class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider"
+            >
+              GSTIN
+            </th>
+
+            <th
+              class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider"
+            >
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 dark:divide-border-dark">
+          {% for client in clients %}
+          <tr
+            class="client-row hover:bg-slate-50 dark:hover:bg-background-dark/30 transition-colors"
+            data-name="{{ client.name }}"
+            id="row-{{ client.id }}"
+          >
+            <td class="px-6 py-4 text-sm font-semibold">#{{ client.id }}</td>
+            <td class="px-6 py-4 text-sm font-medium">
+              <div class="view-mode">
+                <a
+                  href="/clients/{{ client.id }}"
+                  class="text-primary hover:underline"
+                  >{{ client.name }}</a
+                >
+              </div>
+              <div class="edit-mode hidden flex flex-col gap-3 min-w-[260px]">
+                <input
+                  required
+                  type="text"
+                  name="name"
+                  placeholder="Client Name"
+                  value="{{ client.name }}"
+                  form="form-{{ client.id }}"
+                  class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-white dark:bg-background-dark focus:ring-primary focus:border-primary text-sm px-3 py-2 shadow-sm transition-shadow"
+                />
+                <input
+                  type="text"
+                  name="address"
+                  placeholder="Address"
+                  title="Address"
+                  value="{{ client.address or '' }}"
+                  form="form-{{ client.id }}"
+                  class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-white dark:bg-background-dark focus:ring-primary focus:border-primary text-sm px-3 py-2 shadow-sm transition-shadow"
+                />
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-500">
+              <div class="view-mode">{{ client.email }}</div>
+              <div class="edit-mode hidden min-w-[220px]">
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  value="{{ client.email }}"
+                  form="form-{{ client.id }}"
+                  class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-white dark:bg-background-dark focus:ring-primary focus:border-primary text-sm px-3 py-2 shadow-sm transition-shadow"
+                />
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-500">
+              <div class="view-mode">{{ client.phone or '-' }}</div>
+              <div class="edit-mode hidden min-w-[160px]">
+                <input
+                  type="text"
+                  name="phone"
+                  placeholder="Phone"
+                  value="{{ client.phone or '' }}"
+                  form="form-{{ client.id }}"
+                  class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-white dark:bg-background-dark focus:ring-primary focus:border-primary text-sm px-3 py-2 shadow-sm transition-shadow"
+                />
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-500">
+              <div class="view-mode">{{ client.gstin or '-' }}</div>
+              <div class="edit-mode hidden min-w-[180px]">
+                <input
+                  type="text"
+                  name="gstin"
+                  placeholder="GSTIN"
+                  value="{{ client.gstin or '' }}"
+                  form="form-{{ client.id }}"
+                  class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-white dark:bg-background-dark focus:ring-primary focus:border-primary text-sm px-3 py-2 shadow-sm transition-shadow uppercase"
+                />
+              </div>
+            </td>
+
+            <td class="px-6 py-4 text-sm whitespace-nowrap">
+              <!-- Hidden form to handle the edit -->
+              <form
+                id="form-{{ client.id }}"
+                action="/clients/{{ client.id }}/edit"
+                method="post"
+                class="hidden"
+              ></form>
+
+              <div class="view-mode">
+                <button
+                  onclick="enableEdit('{{ client.id }}')"
+                  class="text-primary hover:text-primary/80 font-medium inline-flex items-center gap-1"
+                >
+                  <span class="material-icons-round text-sm">edit</span>
+                  Edit
+                </button>
+              </div>
+              <div class="edit-mode hidden flex gap-2">
+                <button
+                  type="submit"
+                  form="form-{{ client.id }}"
+                  class="bg-primary text-white rounded px-3 py-1 text-xs font-bold hover:bg-primary/90 transition-colors inline-flex items-center gap-1"
+                >
+                  <span class="material-icons-round text-xs">save</span>
+                  Save
+                </button>
+                <button
+                  onclick="disableEdit('{{ client.id }}')"
+                  class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded px-3 py-1 text-xs font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors inline-flex items-center gap-1"
+                >
+                  <span class="material-icons-round text-xs">close</span>
+                  Cancel
+                </button>
+              </div>
+            </td>
+          </tr>
+          {% endfor %} {% if not clients %}
+          <tr id="noClientsRow">
+            <td colspan="6" class="px-6 py-4 text-center text-slate-500">
+              No clients found. Add one above.
+            </td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block scripts %}
+<script>
+  function enableEdit(id) {
+    const row = document.getElementById(`row-${id}`);
+    row
+      .querySelectorAll(".view-mode")
+      .forEach((el) => el.classList.add("hidden"));
+    row
+      .querySelectorAll(".edit-mode")
+      .forEach((el) => el.classList.remove("hidden"));
+  }
+
+  function disableEdit(id) {
+    const row = document.getElementById(`row-${id}`);
+    row
+      .querySelectorAll(".view-mode")
+      .forEach((el) => el.classList.remove("hidden"));
+    row
+      .querySelectorAll(".edit-mode")
+      .forEach((el) => el.classList.add("hidden"));
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("globalSearch");
+
+    if (searchInput) {
+      searchInput.addEventListener("input", () => {
+        const searchTerm = searchInput.value.toLowerCase();
+        const rows = document.querySelectorAll(".client-row");
+        let visibleCount = 0;
+
+        rows.forEach((row) => {
+          const name = row.getAttribute("data-name").toLowerCase();
+          if (name.includes(searchTerm)) {
+            row.style.display = "";
+            visibleCount++;
+          } else {
+            row.style.display = "none";
+          }
+        });
+
+        const noClientsRow = document.getElementById("noClientsRow");
+        if (visibleCount === 0) {
+          if (!noClientsRow) {
+            const tbody = document.querySelector("#clientsTable tbody");
+            const tr = document.createElement("tr");
+            tr.id = "noClientsRow";
+            tr.innerHTML =
+              '<td colspan="6" class="px-6 py-4 text-center text-slate-500">No matching clients found.</td>';
+            tbody.appendChild(tr);
+          } else {
+            noClientsRow.style.display = "";
+          }
+        } else {
+          if (noClientsRow) noClientsRow.style.display = "none";
+        }
+      });
+    }
+  });
+</script>
+{% endblock %}

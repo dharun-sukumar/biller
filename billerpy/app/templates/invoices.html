@@ -1,0 +1,195 @@
+{% extends "base.html" %} 
+
+{% block title %}Invoices{% endblock %} 
+
+{% block content %}
+<div class="flex flex-col gap-8">
+  <div class="flex justify-between items-center">
+    <h2 class="text-2xl font-bold text-slate-800 dark:text-white">Invoices</h2>
+    <a href="/invoices/new" class="bg-primary text-white font-bold py-2.5 px-6 rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2">
+      <span class="material-icons-round">add</span> Create Invoice
+    </a>
+  </div>
+
+  <div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse" id="invoicesTable">
+        <thead>
+          <tr class="bg-slate-50 dark:bg-background-dark/50">
+            <th class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Invoice ID</th>
+            <th class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Client</th>
+            <th class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center">Created Date</th>
+            <th class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Amount</th>
+            <th class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Due Date</th>
+            <th class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Status</th>
+            <th class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 dark:divide-border-dark">
+          {% for invoice in invoices %}
+          <tr class="invoice-row hover:bg-slate-50 dark:hover:bg-background-dark/30 transition-colors" 
+              data-id="{{ invoice.id }}" 
+              data-client="{{ invoice.client.name if invoice.client else '' }}" 
+              data-created="{{ invoice.created_at.strftime('%Y-%m-%d') if invoice.created_at else '' }}">
+            <td class="px-6 py-4 text-sm font-semibold">#INV-{{ invoice.id }}</td>
+            <td class="px-6 py-4 text-sm">{{ invoice.client.name if invoice.client else 'Unknown' }}</td>
+            <td class="px-6 py-4 text-sm text-slate-500 text-center">{{ invoice.created_at.strftime('%Y-%m-%d') if invoice.created_at else 'N/A' }}</td>
+            <td class="px-6 py-4 text-sm font-mono">₹{{ "%.2f"|format(invoice.amount) }}</td>
+            <td class="px-6 py-4 text-sm text-slate-500">{{ invoice.due_date }}</td>
+            <td class="px-6 py-4 text-right">
+              <select onchange="updateStatus('{{ invoice.id }}', this.value)" 
+                      class="text-xs font-medium rounded-full px-2.5 py-1 border-0 cursor-pointer focus:ring-2 focus:ring-primary/20 {{ 'bg-green-100 text-green-800' if invoice.status == 'Paid' else 'bg-amber-100 text-amber-800' if invoice.status == 'Sent' else 'bg-rose-100 text-rose-800' if invoice.status == 'Overdue' else 'bg-slate-100 text-slate-800' }}">
+                <option value="Draft" {{ 'selected' if invoice.status == 'Draft' else '' }}>Draft</option>
+                <option value="Sent" {{ 'selected' if invoice.status == 'Sent' else '' }}>Sent</option>
+                <option value="Paid" {{ 'selected' if invoice.status == 'Paid' else '' }}>Paid</option>
+                <option value="Overdue" {{ 'selected' if invoice.status == 'Overdue' else '' }}>Overdue</option>
+              </select>
+            </td>
+            <td class="px-6 py-4 text-right">
+              <div class="flex items-center justify-end gap-2">
+                <!-- View Action -->
+                <a href="/invoices/{{ invoice.id }}" class="p-1.5 text-slate-400 hover:text-primary transition-colors" title="View">
+                    <span class="material-icons-round text-[20px]">visibility</span>
+                </a>
+                
+                {% if invoice.status == 'Draft' %}
+                <!-- Edit Action -->
+                <a 
+                  href="/invoices/{{ invoice.id }}/edit"
+                  class="p-1.5 text-slate-400 hover:text-blue-600 transition-colors" 
+                  title="Edit">
+                  <span class="material-icons-round text-[20px]">edit</span>
+                </a>
+                
+                <!-- Delete Action -->
+                <button 
+                  onclick="deleteInvoice('{{ invoice.id }}')" 
+                  class="p-1.5 text-slate-400 hover:text-rose-600 transition-colors"
+                  title="Delete">
+                  <span class="material-icons-round text-[20px]">delete</span>
+                </button>
+                {% endif %}
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+          {% if not invoices %}
+          <tr id="noInvoicesRow"><td colspan="7" class="px-6 py-4 text-center text-slate-500">No invoices found.</td></tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div id="editModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-surface-dark rounded-xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all scale-100">
+        <div class="px-6 py-4 border-b border-slate-100 dark:border-border-dark flex justifies-between items-center">
+            <h3 class="font-bold text-lg">Edit Invoice Details</h3>
+        </div>
+        
+        <div class="p-6 space-y-4">
+            <input type="hidden" id="editInvoiceId">
+            
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1">Client</label>
+                <select id="editClient" class="w-full rounded-lg border-slate-200 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-primary focus:border-primary p-2.5">
+                    {% for client in clients %}
+                    <option value="{{ client.id }}">{{ client.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1">Amount</label>
+                <div class="relative">
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">₹</span>
+                    <input type="number" id="editAmount" step="0.01" class="w-full rounded-lg border-slate-200 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-primary focus:border-primary pl-7 p-2.5">
+                </div>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-1">Due Date</label>
+                <input type="date" id="editDueDate" class="w-full rounded-lg border-slate-200 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-primary focus:border-primary p-2.5">
+            </div>
+        </div>
+        
+        <div class="px-6 py-4 bg-slate-50 dark:bg-background-dark flex justify-end gap-3">
+            <button onclick="closeEditModal()" class="px-4 py-2 text-slate-600 font-medium hover:bg-slate-200 rounded-lg transition-colors">Cancel</button>
+            <button onclick="saveInvoiceChanges()" class="px-4 py-2 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-colors shadow-lg shadow-blue-500/20">Save Changes</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  async function deleteInvoice(id) {
+    if (!confirm('Are you sure you want to delete this draft?')) return;
+    const res = await fetch('/invoices/' + id, { method: 'DELETE' });
+    if (res.ok) window.location.reload();
+  }
+  async function updateStatus(id, status) {
+    const res = await fetch('/invoices/' + id + '/status', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: status })
+    });
+    if (res.ok) window.location.reload();
+  }
+  function applyFilters() {
+    const s = document.getElementById('globalSearch')?.value.toLowerCase() || '';
+    const d = document.getElementById('dateRangeInput')?.value || '';
+    document.querySelectorAll('.invoice-row').forEach(r => {
+      const match = (r.dataset.id.toLowerCase().includes(s) || r.dataset.client.toLowerCase().includes(s) || r.dataset.created.includes(s)) && (!d || r.dataset.created === d);
+      r.style.display = match ? '' : 'none';
+    });
+  }
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('globalSearch')?.addEventListener('input', applyFilters);
+    document.getElementById('dateRangeInput')?.addEventListener('change', applyFilters);
+  });
+
+  // Modal Functions
+  function openEditModal(id, clientId, amount, dueDate) {
+    document.getElementById('editInvoiceId').value = id;
+    document.getElementById('editClient').value = clientId;
+    document.getElementById('editAmount').value = amount;
+    document.getElementById('editDueDate').value = dueDate;
+    document.getElementById('editModal').classList.remove('hidden');
+  }
+
+  function closeEditModal() {
+    document.getElementById('editModal').classList.add('hidden');
+  }
+
+  async function saveInvoiceChanges() {
+    const id = document.getElementById('editInvoiceId').value;
+    const body = {
+        client_id: document.getElementById('editClient').value,
+        amount: document.getElementById('editAmount').value,
+        due_date: document.getElementById('editDueDate').value
+    };
+
+    try {
+        const res = await fetch(`/invoices/${id}/details`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+        
+        if (res.ok) {
+            window.location.reload();
+        } else {
+            const data = await res.json();
+            alert('Error updating invoice: ' + data.message);
+        }
+    } catch (e) {
+        alert('Failed to update invoice');
+        console.error(e);
+    }
+  }
+</script>
+{% endblock %}

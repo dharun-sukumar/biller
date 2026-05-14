@@ -1,0 +1,90 @@
+INFO:     Started server process [498760]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:35840 - "GET /invoices/new HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41508 - "POST /invoices/new HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41516 - "POST /invoices/new HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:41526 - "POST /invoices/new HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48988 - "GET /invoices/new HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48998 - "POST /invoices/new HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60900 - "PUT /invoices/30 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42352 - "PUT /invoices/30 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42362 - "POST /invoices/new HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:42366 - "POST /invoices/new HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60124 - "GET /invoices/28/edit HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48794 - "GET /invoices/28/installHook.js.map HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:60124 - "GET /invoices HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:60124 - "GET /invoices/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48794 - "GET /invoices/installHook.js.map HTTP/1.1" 422 Unprocessable Content
+INFO:     127.0.0.1:60124 - "GET /invoices/32/edit HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48794 - "GET /invoices/32/installHook.js.map HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:43990 - "PUT /invoices/32 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43990 - "GET /invoices/32 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43990 - "GET /uploads/logo_2322dd6dff7c4692a70cd2ecf8aa144c.svg HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:44000 - "GET /invoices/installHook.js.map HTTP/1.1" 422 Unprocessable Content
+INFO:     127.0.0.1:54698 - "GET /invoices/32 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49630 - "GET /invoices/32 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56212 - "GET /invoices/32 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34492 - "GET /invoices/installHook.js.map HTTP/1.1" 422 Unprocessable Content
+INFO:     127.0.0.1:47386 - "GET /invoices/32 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:47396 - "GET /invoices/installHook.js.map HTTP/1.1" 422 Unprocessable Content
+INFO:     127.0.0.1:48656 - "GET /invoices/32 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48670 - "GET /invoices/installHook.js.map HTTP/1.1" 422 Unprocessable Content
+INFO:     127.0.0.1:55142 - "GET /invoices/32 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55150 - "GET /invoices/installHook.js.map HTTP/1.1" 422 Unprocessable Content
+INFO:     127.0.0.1:55684 - "GET /invoices/32 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55700 - "GET /invoices/installHook.js.map HTTP/1.1" 422 Unprocessable Content
+INFO:     127.0.0.1:59802 - "GET /invoices/32 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59802 - "GET /uploads/logo_2322dd6dff7c4692a70cd2ecf8aa144c.svg HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:59806 - "GET /invoices/installHook.js.map HTTP/1.1" 422 Unprocessable Content
+INFO:     127.0.0.1:39678 - "GET /invoices/32 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:39682 - "GET /invoices/installHook.js.map HTTP/1.1" 422 Unprocessable Content
+INFO:     127.0.0.1:50860 - "GET /invoices/32 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50868 - "GET /invoices/installHook.js.map HTTP/1.1" 422 Unprocessable Content
+INFO:     127.0.0.1:41664 - "GET /invoices/32 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41678 - "GET /invoices/installHook.js.map HTTP/1.1" 422 Unprocessable Content
+INFO:     127.0.0.1:50728 - "GET /invoices/32 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50732 - "GET /invoices/installHook.js.map HTTP/1.1" 422 Unprocessable Content
+INFO:     127.0.0.1:57172 - "GET /invoices/32 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57180 - "GET /invoices/installHook.js.map HTTP/1.1" 422 Unprocessable Content
+INFO:     127.0.0.1:41064 - "GET /invoices/32 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41070 - "GET /invoices/installHook.js.map HTTP/1.1" 422 Unprocessable Content
+INFO:     127.0.0.1:60100 - "GET /invoices/32 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60108 - "GET /invoices/installHook.js.map HTTP/1.1" 422 Unprocessable Content
+INFO:     127.0.0.1:41804 - "GET /invoices HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:41804 - "GET /invoices/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52058 - "GET /invoices/installHook.js.map HTTP/1.1" 422 Unprocessable Content
+INFO:     127.0.0.1:41804 - "GET /invoices/32/edit HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52058 - "GET /invoices/32/installHook.js.map HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56284 - "GET /invoices HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:56284 - "GET /invoices/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56288 - "GET /invoices/installHook.js.map HTTP/1.1" 422 Unprocessable Content
+INFO:     127.0.0.1:56304 - "GET /invoices/31/edit HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56312 - "GET /invoices/31/installHook.js.map HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56304 - "GET /invoices HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:56304 - "GET /invoices/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54632 - "GET /invoices/installHook.js.map HTTP/1.1" 422 Unprocessable Content
+INFO:     127.0.0.1:56304 - "GET /invoices/15/edit HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54632 - "GET /invoices/15/installHook.js.map HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:40728 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40730 - "GET /installHook.js.map HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:40728 - "GET /invoices HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:40728 - "GET /invoices/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40730 - "GET /invoices/installHook.js.map HTTP/1.1" 422 Unprocessable Content
+INFO:     127.0.0.1:40728 - "GET /invoices/new HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40730 - "GET /invoices/installHook.js.map HTTP/1.1" 422 Unprocessable Content
+INFO:     127.0.0.1:34010 - "POST /invoices/new HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34010 - "GET /invoices/33 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34010 - "GET /uploads/logo_2322dd6dff7c4692a70cd2ecf8aa144c.svg HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:34020 - "GET /invoices/installHook.js.map HTTP/1.1" 422 Unprocessable Content
+INFO:     127.0.0.1:34010 - "GET /invoices HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:34010 - "GET /invoices/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34020 - "GET /invoices/installHook.js.map HTTP/1.1" 422 Unprocessable Content
+INFO:     127.0.0.1:48878 - "GET /invoices/33/edit HTTP/1.1" 200 OK
+INFO:     127.0.0.1:48894 - "GET /invoices/33/installHook.js.map HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:46556 - "GET /invoices HTTP/1.1" 307 Temporary Redirect
+INFO:     127.0.0.1:46556 - "GET /invoices/ HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46568 - "GET /invoices/installHook.js.map HTTP/1.1" 422 Unprocessable Content
+INFO:     127.0.0.1:51750 - "GET /invoices/33 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51754 - "GET /invoices/installHook.js.map HTTP/1.1" 422 Unprocessable Content

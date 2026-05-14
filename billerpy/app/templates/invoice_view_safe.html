@@ -1,0 +1,472 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ title }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Round"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Manrope", sans-serif;
+      }
+      .font-serif {
+        font-family: "Playfair Display", serif;
+      }
+      @page {
+        size: A4;
+        margin: 0;
+      }
+      body {
+        background: #f1f5f9;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .print-container {
+        width: 210mm;
+        min-height: 297mm;
+        padding: 20mm;
+        margin: 20mm auto;
+        background: white;
+        box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        position: relative;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+      }
+      @media print {
+        .no-print {
+          display: none !important;
+        }
+        body {
+          background: white !important;
+          margin: 0 !important;
+          padding: 0 !important;
+        }
+        .print-container {
+          width: 210mm;
+          min-height: 297mm;
+          margin: 0 !important;
+          padding: 8mm !important;
+          box-shadow: none !important;
+          border: none !important;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+        * {
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-slate-100 text-black">
+    <!-- Actions Bar -->
+    <div class="w-[210mm] mt-8 mb-6 flex justify-between items-center no-print">
+      <div class="flex items-center gap-4">
+        <a
+          href="/invoices"
+          class="flex items-center gap-2 text-black hover:text-black font-medium transition-colors"
+        >
+          <span class="material-icons-round">arrow_back</span> Back to Invoices
+        </a>
+        <div class="h-6 w-px bg-slate-300"></div>
+        <select
+          onchange="updateStatus('{{ invoice.id }}', this.value)"
+          class="text-sm font-semibold rounded-lg px-3 py-1.5 border-slate-200 cursor-pointer focus:ring-2 focus:ring-primary/20 {% if invoice.status == 'Paid' %} bg-green-50 text-green-700 border-green-200 {% elif invoice.status == 'Sent' %} bg-amber-50 text-amber-700 border-amber-200 {% elif invoice.status == 'Overdue' %} bg-rose-50 text-rose-700 border-rose-200 {% else %} bg-slate-50 text-black border-slate-200 {% endif %}"
+        >
+          {% if invoice.status == 'Draft' %}
+          <option value="Draft" selected>Draft</option>
+          {% else %}
+          <option value="Draft">Draft</option>
+          {% endif %} {% if invoice.status == 'Sent' %}
+          <option value="Sent" selected>Sent</option>
+          {% else %}
+          <option value="Sent">Sent</option>
+          {% endif %} {% if invoice.status == 'Paid' %}
+          <option value="Paid" selected>Paid</option>
+          {% else %}
+          <option value="Paid">Paid</option>
+          {% endif %} {% if invoice.status == 'Overdue' %}
+          <option value="Overdue" selected>Overdue</option>
+          {% else %}
+          <option value="Overdue">Overdue</option>
+          {% endif %}
+        </select>
+      </div>
+      <button
+        onclick="window.print()"
+        class="bg-[#197fe6] text-white px-6 py-2.5 rounded-lg font-bold hover:bg-[#197fe6]/90 transition-colors shadow-lg shadow-[#197fe6]/20 flex items-center gap-2"
+      >
+        <span class="material-icons-round">print</span> Print Invoice
+      </button>
+    </div>
+
+    <div class="print-container max-w-4xl mx-auto bg-white p-12 shadow-sm">
+      <!-- Top Section -->
+      <div
+        class="flex justify-between items-start mb-12 print:mb-2 border-b border-slate-100 pb-8 print:pb-2 text-sm"
+      >
+        <h1 class="text-6xl text-black font-serif tracking-tight self-center">
+          INVOICE
+        </h1>
+        <div class="flex flex-col items-end text-right">
+          <img
+            src="{{ invoice.logo_path or settings.logo_path or '/static/logo.png' }}"
+            alt="Logo"
+            class="10 object-contain mb-2"
+          />
+          <div class="text-xs text-black font-medium leading-relaxed">
+            {% set f_addr1 = invoice.from_address_line1 or
+            settings.address_line1 or '' %} {% if f_addr1 %}
+            <p>{{ f_addr1 }}</p>
+            {% endif %} {% set f_addr2 = invoice.from_address_line2 or
+            settings.address_line2 or '' %} {% if f_addr2 %}
+            <p>{{ f_addr2 }}</p>
+            {% endif %} {% set f_ph = invoice.from_phone or settings.phone or ''
+            %} {% set f_em = invoice.from_email or settings.email or '' %} {%
+            set f_gst = invoice.from_gst_no or settings.gst_no %} {% set f_pan =
+            invoice.from_pan_no or settings.pan_no %} {% if f_ph or f_em or
+            f_gst or f_pan %}
+            <div class="mt-2 text-xs text-black space-y-0.5">
+              {% if f_ph %}
+              <p>PH: {{ f_ph }}</p>
+              {% endif %} {% if f_em %}
+              <p>Email: {{ f_em }}</p>
+              {% endif %} {% if f_gst %}
+              <p>GSTIN: {{ f_gst }}</p>
+              {% endif %} {% if f_pan %}
+              <p>PAN: {{ f_pan|upper }}</p>
+              {% endif %}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Info Grid -->
+      <div
+        class="flex flex-col md:flex-row justify-between gap-12 mb-16 print:mb-1"
+      >
+        <div class="flex">
+          <div>
+            <h3
+              class="text-xs font-bold text-black uppercase tracking-widest mb-2"
+            >
+              BILL TO:
+            </h3>
+            {% if invoice.client %}
+            <p class="font-bold text-black text-lg">
+              {{ invoice.client.name }}
+            </p>
+            {% if invoice.client.email %}
+            <p class="text-black">{{ invoice.client.email }}</p>
+            {% endif %} {% if invoice.client.phone %}
+            <p class="text-black">PH: {{ invoice.client.phone }}</p>
+            {% endif %} {% if invoice.client.address %}
+            <div class="text-black">{{ invoice.client.address }}</div>
+            {% endif %} {% if invoice.client.gstin or invoice.customer_gstin %}
+            <p class="text-black">
+              GSTIN: {{ (invoice.client.gstin or invoice.customer_gstin)|upper
+              }}
+            </p>
+            {% endif %} {% else %}
+            <p class="text-black">Client details not available</p>
+            {% endif %}
+          </div>
+        </div>
+        <div class="text-right space-y-2">
+          <p class="text-black text-sm">Date: {{ date_str }}</p>
+          <div class="text-black text-sm flex items-center justify-end gap-2">
+            <span>Invoice NO.</span>
+            <span>{{ invoice.invoice_number or invoice.id }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      {% set ns = namespace(has_hsn=false) %} {% for item in items %} {% if
+      item.hsn and item.hsn|trim != '' %} {% set ns.has_hsn = true %} {% endif
+      %} {% endfor %}
+
+      <div class="mb-8 print:mb-4">
+        <table class="w-full">
+          <thead>
+            <tr class="bg-[#0aadc7]">
+              {% if ns.has_hsn %}
+              <th
+                class="py-4 print:py-1.5 pl-6 text-left font-bold text-white uppercase tracking-wider text-sm print:text-xs w-32"
+              >
+                HSN/SAC
+              </th>
+              {% endif %}
+              <th
+                class="py-4 print:py-1.5 {% if not ns.has_hsn %}pl-6{% endif %} text-left font-bold text-white uppercase tracking-wider text-sm print:text-xs"
+              >
+                DESCRIPTION
+              </th>
+              <th
+                class="py-4 print:py-1.5 text-right font-bold text-white uppercase tracking-wider text-sm print:text-xs w-48"
+              >
+                PRICE
+              </th>
+              <th
+                class="py-4 print:py-1.5 pr-6 text-right font-bold text-white uppercase tracking-wider text-sm print:text-xs w-48"
+              >
+                TOTAL
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in items %}
+            <tr class="border-b border-slate-100 print:text-sm">
+              {% if ns.has_hsn %}
+              <td class="py-5 print:py-1 pl-6 text-left text-white">
+                {{ item.hsn or '-' }}
+              </td>
+              {% endif %}
+              <td
+                class="py-5 print:py-1 {% if not ns.has_hsn %}pl-6{% endif %} font-medium text-black"
+              >
+                {{ item.description or 'Untitled Item' }}
+              </td>
+              <td class="py-5 print:py-1 text-right text-black">
+                ₹{{ "%.2f"|format(item.price or 0) }}
+              </td>
+              <td class="py-5 print:py-1 pr-6 text-right font-bold text-black">
+                ₹{{ "%.2f"|format(item.price or 0) }}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Total -->
+      {% set subtotal = namespace(value=0) %} {% set cgst_total =
+      namespace(value=0) %} {% set gst_total = namespace(value=0) %} {% set
+      sgst_total = namespace(value=0) %} {% for item in items %} {% set
+      item_price = item.price or 0 %} {% set subtotal.value = subtotal.value +
+      item_price %} {% if item.tax_type == 'cgst' %} {% set cgst_total.value =
+      cgst_total.value + (item_price * 0.18) %} {% elif item.tax_type ==
+      'gst_sgst' %} {% set gst_total.value = gst_total.value + (item_price *
+      0.09) %} {% set sgst_total.value = sgst_total.value + (item_price * 0.09)
+      %} {% endif %} {% endfor %}
+
+      <div class="flex flex-col mb-12 print:mb-2 break-inside-avoid items-end">
+        <div class="w-2/3 lg:w-1/2 print:text-sm">
+          {% if cgst_total.value > 0 or gst_total.value > 0 or sgst_total.value
+          > 0 %}
+          <div
+            class="w-full flex justify-between items-center py-2 print:py-1 px-6 border-b border-slate-100"
+          >
+            <span class="font-bold text-slate-700">Subtotal</span>
+            <span class="text-black font-mono"
+              >₹{{ "%.2f"|format(subtotal.value) }}</span
+            >
+          </div>
+          {% endif %} {% if cgst_total.value > 0 %}
+          <div
+            class="w-full flex justify-between items-center py-2 print:py-1 px-6 border-b border-slate-100"
+          >
+            <span class="font-bold text-slate-700">IGST (18%)</span>
+            <span class="text-slate-600 font-mono"
+              >₹{{ "%.2f"|format(cgst_total.value) }}</span
+            >
+          </div>
+          {% endif %} {% if gst_total.value > 0 %}
+          <div
+            class="w-full flex justify-between items-center py-2 print:py-1 px-6 border-b border-slate-100"
+          >
+            <span class="font-bold text-slate-700">CGST (9%)</span>
+            <span class="text-slate-600 font-mono"
+              >₹{{ "%.2f"|format(gst_total.value) }}</span
+            >
+          </div>
+          {% endif %} {% if sgst_total.value > 0 %}
+          <div
+            class="w-full flex justify-between items-center py-2 print:py-1 px-6 border-b border-slate-100"
+          >
+            <span class="font-bold text-slate-700">SGST (9%)</span>
+            <span class="text-slate-600 font-mono"
+              >₹{{ "%.2f"|format(sgst_total.value) }}</span
+            >
+          </div>
+          {% endif %}
+
+          <div
+            class="w-full bg-[#0aadc7]/60 py-4 print:py-2 px-6 flex flex-col justify-end mt-2 print:mt-1"
+          >
+            <div class="w-full flex justify-between items-center">
+              <span class=" text-black text-lg">Total amount</span>
+              <span class="text-lg text-black"
+                >₹{{ "%.2f"|format(invoice.amount or 0) }}</span
+              >
+            </div>
+            {% set total_amount = invoice.amount or 0 %} {% set rounded_total =
+            total_amount|round|int %} {% set round_off = rounded_total -
+            total_amount %} {% if round_off != 0 %}
+            <div
+              class="w-full flex justify-between items-center mt-1 text-sm text-black opacity-80 font-medium pt-1"
+            >
+              <span>Round-off</span>
+              <span class="font-mono">{{ "%.2f"|format(round_off) }}</span>
+            </div>
+            <div
+              class="w-full flex justify-between items-center mt-3 border-t border-slate-300 pt-3 text-xl foxt-white font-bold text-black print:mt-2 print:pt-2 print:text-lg"
+            >
+              <span>Net Payable</span>
+              <span>₹{{ rounded_total }}</span>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="mt-auto pt-2 print:pt-0">
+        <!-- Notes Section -->
+        {% if invoice.notes %}
+        <div
+          class="mt-6 print:mt-2 print:p-2 text-sm text-black leading-relaxed"
+        >
+          <p class=" mb-2">Note: {{ invoice.notes }}</p>
+        </div>
+        {% endif %}
+        <div
+          class="flex justify-between items-end border-t border-slate-300 print:border-slate-400 pt-8 print:pt-3"
+        >
+          <div class="w-1/3">
+            <h4
+              class="font-bold text-black uppercase text-xs tracking-widest mb-2"
+            >
+              PAYMENT METHOD
+            </h4>
+            <div class="text-black text-sm space-y-1">
+              {% set display_bank = invoice.bank_name or settings.bank_name %}
+              {% set display_account = invoice.account_no or settings.account_no
+              %} {% set display_ifsc = invoice.ifsc_code or settings.ifsc_code
+              %} {% if display_bank %}
+              <p class="font-semibold">{{ display_bank }}</p>
+              {% endif %} {% if invoice.branch_name or settings.branch_name %}
+              <p class="text-xs">
+                {{ invoice.branch_name or settings.branch_name }}
+              </p>
+              {% endif %} {% if display_account %}
+              <p>
+                Account No: <span class="font-mono">{{ display_account }}</span>
+              </p>
+              {% endif %} {% if display_ifsc %}
+              <p>IFSC: <span class="font-mono">{{ display_ifsc }}</span></p>
+              {% endif %}
+            </div>
+          </div>
+          <div class="w-1/3 flex flex-col items-center justify-end text-center">
+            <img
+              src="{{ invoice.qr_code_path or '/static/payment_qr.jpeg' }}"
+              onerror="
+                if (!this.src || this.src.includes('None'))
+                  this.style.display = 'none';
+              "
+              alt="QR"
+              class="w-32 h-32 print:w-20 print:h-20 object-contain mb-2 print:mb-1"
+            />
+            <p
+              class="text-[10px] text-black uppercase tracking-wider print:text-[8px]"
+            >
+              Scan to Pay
+            </p>
+          </div>
+          <div class="w-1/3 flex flex-col items-end">
+            <div
+              class="h-24 print:h-16 flex items-end justify-center mb-2 print:mb-1"
+            >
+              {% if invoice.signature_path %}
+              <img
+                src="{{ invoice.signature_path }}"
+                alt="Signature"
+                class="max-h-full object-contain mb-1"
+              />
+              {% elif settings.signature_path %}
+              <img
+                src="{{ settings.signature_path }}"
+                alt="Signature"
+                class="max-h-full object-contain mb-1"
+              />
+              {% endif %}
+            </div>
+            <div
+              class="border-t border-slate-300 w-40 pt-2 text-center text-xs text-black uppercase tracking-wider"
+            >
+              Authorized Signature
+            </div>
+          </div>
+        </div>
+        <div
+          class="mt-8 print:mt-2 text-center border-t border-slate-100 pt-2 print:pt-1"
+        >
+          <h4
+            class="font-serif pl-4 text-xl print:text-lg text-black mb-1 print:mb-0"
+          >
+            Thank you for your business!
+          </h4>
+        </div>
+      </div>
+    </div>
+    <script class="no-print">
+      async function updateStatus(invoiceId, newStatus) {
+        try {
+          const response = await fetch(`/invoices/${invoiceId}/status`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: newStatus }),
+          });
+          if (response.ok) {
+            window.location.reload();
+          } else {
+            alert("Failed to update status");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          alert("An error occurred");
+        }
+      }
+
+      async function updateInvoiceNumber(invoiceId) {
+        const newNumber = document.getElementById("invoiceNumInput").value;
+        if (!newNumber) {
+          alert("Invoice number cannot be empty");
+          return;
+        }
+        try {
+          const response = await fetch(
+            `/invoices/${invoiceId}/invoice-number`,
+            {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ invoice_number: newNumber }),
+            },
+          );
+          if (response.ok) {
+            window.location.reload();
+          } else {
+            alert("Failed to update invoice number");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          alert("An error occurred");
+        }
+      }
+    </script>
+  </body>
+</html>

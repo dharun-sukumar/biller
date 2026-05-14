@@ -1,0 +1,237 @@
+{% extends "base.html" %} {% block title %}Services{% endblock %} {% block
+content %}
+<div class="flex flex-col gap-8">
+  <!-- Add Service Form -->
+  <div
+    class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm"
+  >
+    <h2 class="font-bold text-lg mb-4">Add New Service</h2>
+    <form
+      action="/services/new"
+      method="post"
+      class="grid grid-cols-1 md:grid-cols-2 gap-4"
+    >
+      <div>
+        <label
+          class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >Service Name</label
+        >
+        <input
+          required
+          name="name"
+          type="text"
+          class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary"
+        />
+      </div>
+      <div>
+        <label
+          class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >HSN/SAC Code</label
+        >
+        <input
+          name="hsn"
+          type="text"
+          class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary"
+        />
+      </div>
+      <div class="md:col-span-2 flex justify-end">
+        <button
+          type="submit"
+          class="bg-primary text-white font-bold py-2.5 px-6 rounded-lg hover:bg-primary/90 transition-colors"
+        >
+          Add Service
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Services List -->
+  <div
+    class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark shadow-sm overflow-hidden"
+  >
+    <div class="p-6 border-b border-slate-200 dark:border-border-dark">
+      <h2 class="font-bold">All Services</h2>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse" id="servicesTable">
+        <thead>
+          <tr class="bg-slate-50 dark:bg-background-dark/50">
+            <th
+              class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-24"
+            >
+              ID
+            </th>
+            <th
+              class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-32"
+            >
+              HSN/SAC
+            </th>
+            <th
+              class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider"
+            >
+              Service Name
+            </th>
+            <th
+              class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-48"
+            >
+              Actions
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 dark:divide-border-dark">
+          {% for service in services %}
+          <tr
+            class="service-row hover:bg-slate-50 dark:hover:bg-background-dark/30 transition-colors"
+            data-name="{{ service.name }}"
+            id="row-{{ service.id }}"
+          >
+            <td class="px-6 py-4 text-sm font-semibold">#{{ service.id }}</td>
+            <td class="px-6 py-4 text-sm font-medium text-slate-500">
+              <div class="view-mode">{{ service.hsn or '-' }}</div>
+              <div class="edit-mode hidden">
+                <input
+                  type="text"
+                  name="hsn"
+                  value="{{ service.hsn or '' }}"
+                  form="form-{{ service.id }}"
+                  class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-white dark:bg-background-dark focus:ring-primary focus:border-primary text-sm px-2 py-1"
+                />
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm font-medium">
+              <div class="view-mode">{{ service.name }}</div>
+              <div class="edit-mode hidden">
+                <input
+                  required
+                  type="text"
+                  name="name"
+                  value="{{ service.name }}"
+                  form="form-{{ service.id }}"
+                  class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-white dark:bg-background-dark focus:ring-primary focus:border-primary text-sm px-2 py-1"
+                />
+              </div>
+            </td>
+            <td class="px-6 py-4 text-sm whitespace-nowrap">
+              <!-- Edit Form -->
+              <form
+                id="form-{{ service.id }}"
+                action="/services/{{ service.id }}/edit"
+                method="post"
+                class="hidden"
+              ></form>
+              <!-- Delete Form -->
+              <form
+                id="delete-form-{{ service.id }}"
+                action="/services/{{ service.id }}/delete"
+                method="post"
+                class="hidden"
+              ></form>
+
+              <div class="view-mode flex gap-3">
+                <button
+                  onclick="enableEdit('{{ service.id }}')"
+                  class="text-primary hover:text-primary/80 font-medium inline-flex items-center gap-1"
+                >
+                  <span class="material-icons-round text-sm">edit</span>
+                  Edit
+                </button>
+                <button
+                  onclick="if(confirm('Are you sure you want to delete this service?')) document.getElementById('delete-form-{{ service.id }}').submit()"
+                  class="text-rose-500 hover:text-rose-600 font-medium inline-flex items-center gap-1"
+                >
+                  <span class="material-icons-round text-sm">delete</span>
+                  Delete
+                </button>
+              </div>
+              <div class="edit-mode hidden flex gap-2">
+                <button
+                  type="submit"
+                  form="form-{{ service.id }}"
+                  class="bg-primary text-white rounded px-3 py-1 text-xs font-bold hover:bg-primary/90 transition-colors inline-flex items-center gap-1"
+                >
+                  <span class="material-icons-round text-xs">save</span>
+                  Save
+                </button>
+                <button
+                  onclick="disableEdit('{{ service.id }}')"
+                  class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded px-3 py-1 text-xs font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors inline-flex items-center gap-1"
+                >
+                  <span class="material-icons-round text-xs">close</span>
+                  Cancel
+                </button>
+              </div>
+            </td>
+          </tr>
+          {% endfor %} {% if not services %}
+          <tr id="noServicesRow">
+            <td colspan="4" class="px-6 py-4 text-center text-slate-500">
+              No services found. Add one above.
+            </td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block scripts %}
+<script>
+  function enableEdit(id) {
+    const row = document.getElementById(`row-${id}`);
+    row
+      .querySelectorAll(".view-mode")
+      .forEach((el) => el.classList.add("hidden"));
+    row
+      .querySelectorAll(".edit-mode")
+      .forEach((el) => el.classList.remove("hidden"));
+  }
+
+  function disableEdit(id) {
+    const row = document.getElementById(`row-${id}`);
+    row
+      .querySelectorAll(".view-mode")
+      .forEach((el) => el.classList.remove("hidden"));
+    row
+      .querySelectorAll(".edit-mode")
+      .forEach((el) => el.classList.add("hidden"));
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("globalSearch");
+
+    if (searchInput) {
+      searchInput.addEventListener("input", () => {
+        const searchTerm = searchInput.value.toLowerCase();
+        const rows = document.querySelectorAll(".service-row");
+        let visibleCount = 0;
+
+        rows.forEach((row) => {
+          const name = row.getAttribute("data-name").toLowerCase();
+          if (name.includes(searchTerm)) {
+            row.style.display = "";
+            visibleCount++;
+          } else {
+            row.style.display = "none";
+          }
+        });
+
+        const noServicesRow = document.getElementById("noServicesRow");
+        if (visibleCount === 0) {
+          if (!noServicesRow) {
+            const tbody = document.querySelector("#servicesTable tbody");
+            const tr = document.createElement("tr");
+            tr.id = "noServicesRow";
+            tr.innerHTML =
+              '<td colspan="4" class="px-6 py-4 text-center text-slate-500">No matching services found.</td>';
+            tbody.appendChild(tr);
+          } else {
+            noServicesRow.style.display = "";
+          }
+        } else {
+          if (noServicesRow) noServicesRow.style.display = "none";
+        }
+      });
+    }
+  });
+</script>
+{% endblock %}

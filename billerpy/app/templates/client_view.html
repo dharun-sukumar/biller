@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}{{ client.name }}{% endblock %}
+
+{% block content %}
+<div class="flex flex-col gap-8">
+    <div class="flex justify-between items-center">
+        <div class="flex items-center gap-4">
+            <a href="/clients" class="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors">
+                <span class="material-icons-round text-slate-500">arrow_back</span>
+            </a>
+            <h2 class="text-2xl font-bold text-slate-800 dark:text-white">{{ client.name }}</h2>
+        </div>
+        <button onclick="toggleEditForm()"
+            class="bg-primary text-white font-bold py-2.5 px-6 rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2">
+            <span class="material-icons-round">edit</span>
+            Edit Client
+        </button>
+    </div>
+
+    <!-- Edit Form (Hidden by default) -->
+    <div id="editForm"
+        class="hidden bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="font-bold text-lg">Edit Client details</h3>
+            <button onclick="toggleEditForm()" class="text-slate-400 hover:text-slate-600">
+                <span class="material-icons-round">close</span>
+            </button>
+        </div>
+        <form action="/clients/{{ client.id }}/edit" method="post" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Client Name</label>
+                <input required name="name" type="text" value="{{ client.name }}"
+                    class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email</label>
+                <input required name="email" type="email" value="{{ client.email }}"
+                    class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Phone</label>
+                <input name="phone" type="text" value="{{ client.phone or '' }}"
+                    class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Address</label>
+                <input name="address" type="text" value="{{ client.address or '' }}"
+                    class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary">
+            </div>
+            <div class="md:col-span-2 flex justify-end gap-3">
+                <button type="button" onclick="toggleEditForm()"
+                    class="px-6 py-2.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors">Cancel</button>
+                <button type="submit"
+                    class="bg-primary text-white font-bold py-2.5 px-6 rounded-lg hover:bg-primary/90 transition-colors">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Info Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div
+            class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Email Address</p>
+            <p class="font-semibold text-slate-800 dark:text-white">{{ client.email }}</p>
+        </div>
+        <div
+            class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Phone Number</p>
+            <p class="font-semibold text-slate-800 dark:text-white">{{ client.phone or 'N/A' }}</p>
+        </div>
+        <div
+            class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Total Invoices</p>
+            <p class="font-semibold text-slate-800 dark:text-white">{{ invoices|length }}</p>
+        </div>
+    </div>
+
+    <!-- Invoices List -->
+    <div
+        class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-200 dark:border-border-dark">
+            <h2 class="font-bold">Invoices for this Client</h2>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50 dark:bg-background-dark/50">
+                        <th
+                            class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                            Invoice ID</th>
+                        <th
+                            class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                            Amount</th>
+                        <th
+                            class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                            Due Date</th>
+                        <th
+                            class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">
+                            Status</th>
+                        <th
+                            class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">
+                            Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-border-dark">
+                    {% for invoice in invoices %}
+                    <tr class="hover:bg-slate-50 dark:hover:bg-background-dark/30 transition-colors">
+                        <td class="px-6 py-4 text-sm font-semibold">#INV-{{ invoice.id }}</td>
+                        <td class="px-6 py-4 text-sm font-mono">₹{{ "%.2f"|format(invoice.amount) }}</td>
+                        <td class="px-6 py-4 text-sm text-slate-500">{{ invoice.due_date }}</td>
+                        <td class="px-6 py-4 text-right">
+                            <span class="text-[10px] font-bold rounded-full px-2.5 py-1 uppercase tracking-wider
+                                {% if invoice.status == 'Paid' %}
+                                    bg-green-100 text-green-800
+                                {% elif invoice.status == 'Sent' %}
+                                    bg-amber-100 text-amber-800
+                                {% elif invoice.status == 'Overdue' %}
+                                    bg-rose-100 text-rose-800
+                                {% else %}
+                                    bg-slate-100 text-slate-800
+                                {% endif %}">
+                                {{ invoice.status.value }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <a href="/invoices/{{ invoice.id }}"
+                                class="text-primary hover:text-primary/80 font-medium">View</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if not invoices %}
+                    <tr>
+                        <td colspan="5" class="px-6 py-4 text-center text-slate-500">No invoices found for this client.
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function toggleEditForm() {
+        const form = document.getElementById('editForm');
+        form.classList.toggle('hidden');
+    }
+</script>
+{% endblock %}

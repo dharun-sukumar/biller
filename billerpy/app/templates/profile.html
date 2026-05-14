@@ -1,0 +1,438 @@
+{% extends "base.html" %} {% block content %}
+<div class="max-w-5xl mx-auto space-y-8">
+  <!-- Header -->
+  <div class="flex justify-between items-end border-b border-slate-200 pb-6">
+    <div>
+      <h1 class="text-3xl font-bold text-slate-900 tracking-tight">Settings</h1>
+      <p class="text-slate-500 mt-2">
+        Manage your company profile, branding, and billing details.
+      </p>
+    </div>
+    <button
+      id="save-btn-top"
+      form="profile-form"
+      type="submit"
+      disabled
+      class="bg-[#197fe6] text-white px-6 py-2.5 rounded-lg font-bold hover:bg-[#156fc9] transition-all shadow-lg shadow-blue-500/20 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+    >
+      <span class="material-icons-round text-sm">save</span> Save Changes
+    </button>
+  </div>
+
+  <form
+    id="profile-form"
+    action="/profile"
+    method="post"
+    enctype="multipart/form-data"
+    class="grid grid-cols-1 lg:grid-cols-3 gap-8"
+  >
+    <!-- Left Column: Company Info -->
+    <div class="lg:col-span-2 space-y-8">
+      <!-- Basic Details Card -->
+      <div
+        class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden"
+      >
+        <div class="bg-slate-50/50 px-6 py-4 border-b border-slate-200">
+          <h3 class="font-bold text-slate-800">Company Details</h3>
+          <p class="text-xs text-slate-500 mt-0.5">
+            This information will appear on your invoices.
+          </p>
+        </div>
+        <div class="p-6 space-y-6">
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-2"
+              >Company Name</label
+            >
+            <input
+              type="text"
+              name="company_name"
+              value="{{ settings.company_name or '' }}"
+              class="w-full rounded-lg border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-blue-500 transition-all font-medium text-slate-800 p-2.5"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-2"
+              >Address Line 1</label
+            >
+            <input
+              type="text"
+              name="address_line1"
+              value="{{ settings.address_line1 or '' }}"
+              class="w-full rounded-lg border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-blue-500 transition-all font-medium text-slate-800 p-2.5"
+            />
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-2"
+              >Address Line 2</label
+            >
+            <input
+              type="text"
+              name="address_line2"
+              value="{{ settings.address_line2 or '' }}"
+              class="w-full rounded-lg border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-blue-500 transition-all font-medium text-slate-800 p-2.5"
+            />
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-2"
+                >Phone Number</label
+              >
+              <div class="relative">
+                <span
+                  class="material-icons-round absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"
+                  >phone</span
+                >
+                <input
+                  type="text"
+                  name="phone"
+                  value="{{ settings.phone or '' }}"
+                  class="w-full rounded-lg border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-blue-500 transition-all pl-9 p-2.5 text-slate-700"
+                />
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-2"
+                >Email Address</label
+              >
+              <div class="relative">
+                <span
+                  class="material-icons-round absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"
+                  >email</span
+                >
+                <input
+                  type="email"
+                  name="email"
+                  value="{{ settings.email or '' }}"
+                  class="w-full rounded-lg border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-blue-500 transition-all pl-9 p-2.5 text-slate-700"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-2"
+                >PAN Number</label
+              >
+              <div class="relative">
+                <span
+                  class="material-icons-round absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"
+                  >credit_card</span
+                >
+                <input
+                  type="text"
+                  name="pan_no"
+                  value="{{ settings.pan_no or '' }}"
+                  class="w-full rounded-lg border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-blue-500 transition-all font-mono pl-9 p-2.5 text-slate-700 uppercase"
+                />
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-2"
+                >GST Number</label
+              >
+              <div class="relative">
+                <span
+                  class="material-icons-round absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"
+                  >receipt_long</span
+                >
+                <input
+                  type="text"
+                  name="gst_no"
+                  value="{{ settings.gst_no or '' }}"
+                  class="w-full rounded-lg border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-blue-500 transition-all font-mono pl-9 p-2.5 text-slate-700 uppercase"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Details Card -->
+      <div
+        class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden"
+      >
+        <div class="bg-slate-50/50 px-6 py-4 border-b border-slate-200">
+          <h3 class="font-bold text-slate-800">Payment Information</h3>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Bank details displayed in the footer.
+          </p>
+        </div>
+        <div class="p-6 space-y-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-2"
+                >Bank Name</label
+              >
+              <input
+                type="text"
+                name="bank_name"
+                value="{{ settings.bank_name or '' }}"
+                class="w-full rounded-lg border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-blue-500 transition-all font-medium text-slate-800 p-2.5"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-2"
+                >Branch Name</label
+              >
+              <input
+                type="text"
+                name="branch_name"
+                value="{{ settings.branch_name or '' }}"
+                class="w-full rounded-lg border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-blue-500 transition-all font-medium text-slate-800 p-2.5"
+              />
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-2"
+                >Account Number</label
+              >
+              <input
+                type="text"
+                name="account_no"
+                value="{{ settings.account_no or '' }}"
+                class="w-full rounded-lg border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-blue-500 transition-all font-mono text-slate-800 p-2.5"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-slate-700 mb-2"
+                >IFSC Code</label
+              >
+              <input
+                type="text"
+                name="ifsc_code"
+                value="{{ settings.ifsc_code or '' }}"
+                class="w-full rounded-lg border-slate-200 bg-slate-50 focus:bg-white focus:border-blue-500 focus:ring-blue-500 transition-all font-mono text-slate-800 p-2.5"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Secondary Save Button -->
+      <div class="flex justify-end pt-4 pr-2">
+        <button
+          id="save-btn-bottom"
+          form="profile-form"
+          type="submit"
+          disabled
+          class="bg-[#197fe6] text-white px-8 py-3 rounded-xl font-bold hover:bg-[#156fc9] transition-all shadow-lg shadow-blue-500/20 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+        >
+          <span class="material-icons-round text-sm">save</span> Save Profile
+          Changes
+        </button>
+      </div>
+    </div>
+
+    <!-- Right Column: Visual Branding -->
+    <div class="space-y-8">
+      <div
+        class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden"
+      >
+        <div class="bg-slate-50/50 px-6 py-4 border-b border-slate-200">
+          <h3 class="font-bold text-slate-800">Visual Branding</h3>
+        </div>
+        <div class="p-6 space-y-8">
+          <!-- Logo Upload -->
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-3"
+              >Company Logo</label
+            >
+            <div
+              class="border-2 border-dashed border-slate-200 rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-slate-50 transition-colors group"
+            >
+              <div
+                id="logo-preview-container"
+                class="relative mb-4 group-hover:scale-105 transition-transform duration-300 {% if not settings.logo_path %}hidden{% endif %}"
+              >
+                <img
+                  id="logo-preview"
+                  src="{{ settings.logo_path or '' }}"
+                  alt="Current Logo"
+                  class="h-20 object-contain"
+                />
+              </div>
+
+              <div
+                id="logo-placeholder"
+                class="{% if settings.logo_path %}hidden{% endif %}"
+              >
+                <span class="material-icons-round text-slate-300 text-4xl mb-2"
+                  >image</span
+                >
+              </div>
+
+              <input
+                type="file"
+                name="logo"
+                id="logo-upload"
+                accept="image/*"
+                class="hidden"
+                onchange="
+                  previewImage(
+                    this,
+                    'logo-preview',
+                    'logo-preview-container',
+                    'logo-placeholder',
+                  )
+                "
+              />
+              <label
+                for="logo-upload"
+                class="cursor-pointer text-sm text-blue-600 font-semibold hover:text-blue-700 hover:underline"
+              >
+                Click to upload
+              </label>
+              <p class="text-xs text-slate-400 mt-1">
+                Supports all image formats (PNG, JPG, WEBP, etc.)
+              </p>
+            </div>
+          </div>
+
+          <!-- QR Code Upload -->
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-3"
+              >Payment QR Code</label
+            >
+            <div
+              class="border-2 border-dashed border-slate-200 rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-slate-50 transition-colors group"
+            >
+              <div
+                id="qr-preview-container"
+                class="relative mb-4 group-hover:scale-105 transition-transform duration-300 {% if not settings.qr_code_path %}hidden{% endif %}"
+              >
+                <img
+                  id="qr-preview"
+                  src="{{ settings.qr_code_path or '' }}"
+                  alt="Current QR"
+                  class="h-20 object-contain"
+                />
+              </div>
+
+              <div
+                id="qr-placeholder"
+                class="{% if settings.qr_code_path %}hidden{% endif %}"
+              >
+                <span class="material-icons-round text-slate-300 text-4xl mb-2"
+                  >qr_code_2</span
+                >
+              </div>
+
+              <input
+                type="file"
+                name="qr_code"
+                id="qr-upload"
+                accept="image/*"
+                class="hidden"
+                onchange="
+                  previewImage(
+                    this,
+                    'qr-preview',
+                    'qr-preview-container',
+                    'qr-placeholder',
+                  )
+                "
+              />
+              <label
+                for="qr-upload"
+                class="cursor-pointer text-sm text-blue-600 font-semibold hover:text-blue-700 hover:underline"
+              >
+                Click to upload
+              </label>
+              <p class="text-xs text-slate-400 mt-1">Standard QR Code</p>
+            </div>
+          </div>
+
+          <!-- Signature Upload -->
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-3"
+              >Authorized Signature</label
+            >
+            <div
+              class="border-2 border-dashed border-slate-200 rounded-xl p-6 flex flex-col items-center justify-center text-center hover:bg-slate-50 transition-colors group"
+            >
+              <div
+                id="sig-preview-container"
+                class="relative mb-4 group-hover:scale-105 transition-transform duration-300 {% if not settings.signature_path %}hidden{% endif %}"
+              >
+                <img
+                  id="sig-preview"
+                  src="{{ settings.signature_path or '' }}"
+                  alt="Current Signature"
+                  class="h-16 object-contain"
+                />
+              </div>
+
+              <div
+                id="sig-placeholder"
+                class="{% if settings.signature_path %}hidden{% endif %}"
+              >
+                <span class="material-icons-round text-slate-300 text-4xl mb-2"
+                  >draw</span
+                >
+              </div>
+
+              <input
+                type="file"
+                name="signature"
+                id="signature-upload"
+                accept="image/*"
+                class="hidden"
+                onchange="
+                  previewImage(
+                    this,
+                    'sig-preview',
+                    'sig-preview-container',
+                    'sig-placeholder',
+                  )
+                "
+              />
+              <label
+                for="signature-upload"
+                class="cursor-pointer text-sm text-blue-600 font-semibold hover:text-blue-700 hover:underline"
+              >
+                Click to upload
+              </label>
+              <p class="text-xs text-slate-400 mt-1">
+                Supports all image formats (PNG, JPG, WEBP, etc.)
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+  function previewImage(input, previewId, containerId, placeholderId) {
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        document.getElementById(previewId).src = e.target.result;
+        document.getElementById(containerId).classList.remove("hidden");
+        if (placeholderId) {
+          document.getElementById(placeholderId).classList.add("hidden");
+        }
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  // Handle Save Button enabling/disabling
+  const profileForm = document.getElementById("profile-form");
+  const saveBtnTop = document.getElementById("save-btn-top");
+  const saveBtnBottom = document.getElementById("save-btn-bottom");
+
+  const enableButtons = () => {
+    saveBtnTop.disabled = false;
+    saveBtnBottom.disabled = false;
+  };
+
+  profileForm.addEventListener("input", enableButtons);
+  profileForm.addEventListener("change", enableButtons);
+</script>
+{% endblock %}

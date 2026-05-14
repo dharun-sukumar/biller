@@ -1,0 +1,509 @@
+{% extends "base.html" %} {% block title %}{{ 'Edit Invoice #' +
+invoice.id|string if invoice else 'New Invoice' }}{% endblock %} {% block
+content %}
+<div class="max-w-4xl mx-auto">
+  <div
+    class="bg-white dark:bg-surface-dark p-8 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm"
+  >
+    <h2 class="text-2xl font-bold mb-6 text-slate-800 dark:text-white">
+      {{ 'Edit Invoice #' + invoice.id|string if invoice else 'Create New
+      Invoice' }}
+    </h2>
+
+    {% if is_edit %}
+    <input type="hidden" id="invoiceId" value="{{ invoice.id }}" />
+    {% endif %}
+
+    <form id="invoiceForm" class="space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+            >Client</label
+          >
+          <select
+            id="client"
+            class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary"
+          >
+            <option value="">Select a client...</option>
+            {% for client in clients %} {% if invoice and invoice.client_id ==
+            client.id %}
+            <option value="{{ client.id }}" selected>{{ client.name }}</option>
+            {% else %}
+            <option value="{{ client.id }}">{{ client.name }}</option>
+            {% endif %} {% endfor %}
+            <option value="ADD_NEW_CLIENT" class="font-bold text-primary">
+              + Add Client
+            </option>
+          </select>
+        </div>
+        <div>
+          <label
+            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+            >Due Date</label
+          >
+          <input
+            type="date"
+            id="dueDate"
+            value="{{ due_date if is_edit else '' }}"
+            min="{{ today_date }}"
+            class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary calendar-white-icon"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label
+          class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+          >Invoice Number</label
+        >
+        <input
+          type="text"
+          id="invoiceNumber"
+          placeholder="e.g., INV-001, 2024-001"
+          value="{{ invoice.invoice_number if invoice else default_invoice_number }}"
+          class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary"
+        />
+      </div>
+
+      <div>
+        <label
+          class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+          >Notes</label
+        >
+        <textarea
+          id="notes"
+          rows="3"
+          placeholder="Add any notes or terms (e.g., payment terms, project details, etc.)"
+          class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary"
+        >{{ invoice.notes if invoice else '' }}</textarea>
+      </div>
+
+      <!-- Items Section -->
+      <div>
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="font-bold text-lg">Items</h3>
+          <button
+            type="button"
+            onclick="addItem()"
+            class="text-sm font-semibold text-primary hover:underline"
+          >
+            + Add Item
+          </button>
+        </div>
+        <div class="bg-slate-50 dark:bg-background-dark/50 rounded-lg p-4">
+          <table class="w-full text-left" id="itemsTable">
+            <thead>
+              <tr>
+                <th
+                  class="pb-3 text-xs font-bold text-slate-500 uppercase w-24"
+                >
+                  HSN/SAC
+                </th>
+                <th class="pb-3 text-xs font-bold text-slate-500 uppercase">
+                  Description
+                </th>
+                <th
+                  class="pb-3 text-xs font-bold text-slate-500 uppercase w-32"
+                >
+                  Price
+                </th>
+                <th
+                  class="pb-3 text-xs font-bold text-slate-500 uppercase w-36"
+                >
+                  Tax
+                </th>
+                <th
+                  class="pb-3 text-xs font-bold text-slate-500 uppercase w-32 text-right"
+                >
+                  Total
+                </th>
+                <th class="pb-3 w-10"></th>
+              </tr>
+            </thead>
+            <tbody id="itemsBody">
+              <!-- Items will be added here -->
+              {% if is_edit and items %} {% for item in items %}
+              <tr
+                class="border-b border-slate-200 dark:border-border-dark last:border-0"
+              >
+                <td class="py-2 pr-2">
+                  <input
+                    type="number"
+                    value="{{ item.hsn or '' }}"
+                    placeholder="HSN/SAC"
+                    class="hsn-input w-full rounded border-slate-200 dark:border-border-dark bg-white dark:bg-surface-dark text-sm focus:ring-primary focus:border-primary"
+                  />
+                </td>
+                <td class="py-2 pr-2">
+                  <input
+                    type="text"
+                    list="servicesList"
+                    value="{{ item.description }}"
+                    placeholder="Item description"
+                    class="desc-input w-full rounded border-slate-200 dark:border-border-dark bg-white dark:bg-surface-dark text-sm focus:ring-primary focus:border-primary"
+                    oninput="handleServiceChange(this)"
+                  />
+                </td>
+                <td class="py-2 pr-2">
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value="{{ item.price }}"
+                    placeholder="0.00"
+                    class="price-input w-full rounded border-slate-200 dark:border-border-dark bg-white dark:bg-surface-dark text-sm focus:ring-primary focus:border-primary"
+                    oninput="calculateTotal()"
+                  />
+                </td>
+                <td class="py-2 pr-2">
+                  <select
+                    class="tax-type-input w-full rounded border-slate-200 dark:border-border-dark bg-white dark:bg-surface-dark text-sm focus:ring-primary focus:border-primary"
+                    onchange="calculateTotal()"
+                  >
+                    {% if item.tax_type == 'none' %}
+                    <option value="none" selected>None</option>
+                    {% else %}
+                    <option value="none">None</option>
+                    {% endif %} {% if item.tax_type == 'cgst' %}
+                    <option value="cgst" selected>IGST (18%)</option>
+                    {% else %}
+                    <option value="cgst">IGST (18%)</option>
+                    {% endif %} {% if item.tax_type == 'gst_sgst' %}
+                    <option value="gst_sgst" selected>
+                      CGST & SGST (9% each)
+                    </option>
+                    {% else %}
+                    <option value="gst_sgst">CGST & SGST (9% each)</option>
+                    {% endif %}
+                  </select>
+                </td>
+                <td class="py-2 text-right font-mono text-sm item-total">
+                  ₹{{ "%.2f"|format(item.price|float) }}
+                </td>
+                <td class="py-2 text-right">
+                  <button
+                    type="button"
+                    onclick="
+                      this.closest('tr').remove();
+                      calculateTotal();
+                    "
+                    class="text-slate-400 hover:text-rose-500"
+                  >
+                    <span class="material-icons-round text-sm">close</span>
+                  </button>
+                </td>
+              </tr>
+              {% endfor %} {% endif %}
+            </tbody>
+            <tfoot>
+              <tr id="subtotalRow" class="hidden">
+                <td
+                  colspan="4"
+                  class="pt-4 text-right font-bold text-slate-700 dark:text-slate-300"
+                >
+                  Subtotal:
+                </td>
+                <td
+                  class="pt-4 text-right font-mono text-sm"
+                  id="subtotalAmount"
+                >
+                  ₹0.00
+                </td>
+                <td></td>
+              </tr>
+              <tr id="cgstRow" class="hidden">
+                <td
+                  colspan="4"
+                  class="pt-2 text-right font-bold text-slate-700 dark:text-slate-300"
+                >
+                  IGST (18%):
+                </td>
+                <td
+                  class="pt-2 text-right font-mono text-sm text-slate-600 dark:text-slate-400"
+                  id="totalCgst"
+                >
+                  ₹0.00
+                </td>
+                <td></td>
+              </tr>
+              <tr id="gstRow" class="hidden">
+                <td
+                  colspan="4"
+                  class="pt-2 text-right font-bold text-slate-700 dark:text-slate-300"
+                >
+                  CGST (9%):
+                </td>
+                <td
+                  class="pt-2 text-right font-mono text-sm text-slate-600 dark:text-slate-400"
+                  id="totalGst"
+                >
+                  ₹0.00
+                </td>
+                <td></td>
+              </tr>
+              <tr id="sgstRow" class="hidden">
+                <td
+                  colspan="4"
+                  class="pt-2 text-right font-bold text-slate-700 dark:text-slate-300"
+                >
+                  SGST (9%):
+                </td>
+                <td
+                  class="pt-2 text-right font-mono text-sm text-slate-600 dark:text-slate-400"
+                  id="totalSgst"
+                >
+                  ₹0.00
+                </td>
+                <td></td>
+              </tr>
+              <tr>
+                <td
+                  colspan="4"
+                  class="pt-4 text-right font-bold text-slate-700 dark:text-slate-300 border-t border-slate-200 dark:border-border-dark mt-4"
+                >
+                  Total:
+                </td>
+                <td
+                  class="pt-4 text-right font-bold text-primary text-lg border-t border-slate-200 dark:border-border-dark mt-4"
+                  id="grandTotal"
+                >
+                  ₹0.00
+                </td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <div
+        class="flex justify-end gap-4 pt-4 border-t border-slate-200 dark:border-border-dark"
+      >
+        <a
+          href="/invoices"
+          class="px-6 py-2.5 rounded-lg border border-slate-200 dark:border-border-dark text-slate-600 dark:text-slate-400 font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+          >Cancel</a
+        >
+        <button
+          type="submit"
+          class="bg-primary text-white font-bold py-2.5 px-6 rounded-lg hover:bg-primary/90 transition-colors shadow-lg shadow-primary/20"
+        >
+          {{ 'Update Invoice' if is_edit else 'Create Invoice' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<datalist id="servicesList">
+  {% for service in services %}
+  <option
+    value="{{ service.name }}"
+    data-hsn="{{ service.hsn or '' }}"
+  ></option>
+  {% endfor %}
+</datalist>
+
+<script>
+  function handleServiceChange(elem) {
+    const row = elem.closest("tr");
+    if (!row) return;
+
+    let hsnValue = "";
+    const options = document.querySelectorAll("#servicesList option");
+    for (const opt of options) {
+      if (opt.value === elem.value) {
+        hsnValue = opt.getAttribute("data-hsn");
+        break;
+      }
+    }
+
+    const hsnElem = row.querySelector(".hsn-input");
+    if (hsnElem && hsnValue) {
+      hsnElem.value = hsnValue;
+    }
+  }
+
+  function addItem() {
+    const tbody = document.getElementById("itemsBody");
+    const tr = document.createElement("tr");
+    tr.className =
+      "border-b border-slate-200 dark:border-border-dark last:border-0";
+    tr.innerHTML = `
+            <td class="py-2 pr-2">
+                <input type="number" placeholder="HSN/SAC" class="hsn-input w-full rounded border-slate-200 dark:border-border-dark bg-white dark:bg-surface-dark text-sm focus:ring-primary focus:border-primary">
+            </td>
+            <td class="py-2 pr-2">
+                <input type="text" list="servicesList" placeholder="Item description" class="desc-input w-full rounded border-slate-200 dark:border-border-dark bg-white dark:bg-surface-dark text-sm focus:ring-primary focus:border-primary" oninput="handleServiceChange(this)">
+            </td>
+            <td class="py-2 pr-2">
+                <input type="number" min="0" step="0.01" placeholder="0.00" class="price-input w-full rounded border-slate-200 dark:border-border-dark bg-white dark:bg-surface-dark text-sm focus:ring-primary focus:border-primary" oninput="calculateTotal()">
+            </td>
+            <td class="py-2 pr-2">
+                <select class="tax-type-input w-full rounded border-slate-200 dark:border-border-dark bg-white dark:bg-surface-dark text-sm focus:ring-primary focus:border-primary" onchange="calculateTotal()">
+                    <option value="none">None</option>
+                    <option value="cgst">IGST (18%)</option>
+                    <option value="gst_sgst">CGST & SGST (9% each)</option>
+                </select>
+            </td>
+            <td class="py-2 text-right font-mono text-sm item-total">₹0.00</td>
+            <td class="py-2 text-right">
+                <button type="button" onclick="this.closest('tr').remove(); calculateTotal()" class="text-slate-400 hover:text-rose-500">
+                    <span class="material-icons-round text-sm">close</span>
+                </button>
+            </td>
+        `;
+    tbody.appendChild(tr);
+  }
+
+  function calculateTotal() {
+    let subtotal = 0;
+    let cgstTotal = 0;
+    let gstTotal = 0;
+    let sgstTotal = 0;
+
+    const rows = document.querySelectorAll("#itemsBody tr");
+    rows.forEach((row) => {
+      const price = parseFloat(row.querySelector(".price-input").value) || 0;
+      const taxType = row.querySelector(".tax-type-input")
+        ? row.querySelector(".tax-type-input").value
+        : row.querySelector(".tax-type-input")
+          ? row.querySelector(".tax-type-input").value
+          : "none";
+
+      let itemTax = 0;
+      if (taxType === "cgst") {
+        itemTax = price * 0.18;
+        cgstTotal += itemTax;
+      } else if (taxType === "gst_sgst") {
+        gstTotal += price * 0.09;
+        sgstTotal += price * 0.09;
+      }
+
+      row.querySelector(".item-total").textContent = "₹" + price.toFixed(2);
+      subtotal += price;
+    });
+
+    const taxContainerCgst = document.getElementById("cgstRow");
+    const taxContainerGst = document.getElementById("gstRow");
+    const taxContainerSgst = document.getElementById("sgstRow");
+    const subtotalRow = document.getElementById("subtotalRow");
+
+    let hasTax = cgstTotal > 0 || gstTotal > 0 || sgstTotal > 0;
+
+    if (cgstTotal > 0) {
+      if (taxContainerCgst) taxContainerCgst.classList.remove("hidden");
+      const el = document.getElementById("totalCgst");
+      if (el) el.textContent = "₹" + cgstTotal.toFixed(2);
+    } else {
+      if (taxContainerCgst) taxContainerCgst.classList.add("hidden");
+    }
+
+    if (gstTotal > 0 && sgstTotal > 0) {
+      if (taxContainerGst) taxContainerGst.classList.remove("hidden");
+      if (taxContainerSgst) taxContainerSgst.classList.remove("hidden");
+      const elGst = document.getElementById("totalGst");
+      if (elGst) elGst.textContent = "₹" + gstTotal.toFixed(2);
+      const elSgst = document.getElementById("totalSgst");
+      if (elSgst) elSgst.textContent = "₹" + sgstTotal.toFixed(2);
+    } else {
+      if (taxContainerGst) taxContainerGst.classList.add("hidden");
+      if (taxContainerSgst) taxContainerSgst.classList.add("hidden");
+    }
+
+    if (hasTax) {
+      if (subtotalRow) subtotalRow.classList.remove("hidden");
+      const el = document.getElementById("subtotalAmount");
+      if (el) el.textContent = "₹" + subtotal.toFixed(2);
+    } else {
+      if (subtotalRow) subtotalRow.classList.add("hidden");
+    }
+
+    const grandTotal = subtotal + cgstTotal + gstTotal + sgstTotal;
+    const el = document.getElementById("grandTotal");
+    if (el) el.textContent = "₹" + grandTotal.toFixed(2);
+
+    return grandTotal;
+  }
+
+  // Add initial item if empty
+  if (document.getElementById("itemsBody").children.length === 0) {
+    addItem();
+  } else {
+    calculateTotal();
+  }
+
+  document.getElementById("client").addEventListener("change", function () {
+    if (this.value === "ADD_NEW_CLIENT") {
+      window.location.href = "/clients";
+    }
+  });
+
+  document
+    .getElementById("invoiceForm")
+    .addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const clientId = document.getElementById("client").value;
+      const dueDate = document.getElementById("dueDate").value;
+
+      if (!clientId || !dueDate) {
+        alert("Please fill in all required fields");
+        return;
+      }
+
+      const items = [];
+      document.querySelectorAll("#itemsBody tr").forEach((row) => {
+        items.push({
+          description: row.querySelector(".desc-input").value,
+          hsn: row.querySelector(".hsn-input")
+            ? row.querySelector(".hsn-input").value
+            : "",
+          quantity: 1, // Default to 1 since we removed the field
+          price: parseFloat(row.querySelector(".price-input").value) || 0,
+          tax_type: row.querySelector(".tax-type-input")
+            ? row.querySelector(".tax-type-input").value
+            : "none",
+        });
+      });
+
+      const totalAmount = calculateTotal();
+
+      const data = {
+        client_id: parseInt(clientId),
+        amount: totalAmount,
+        due_date: dueDate,
+        status: "Draft",
+        items_json: JSON.stringify(items),
+        notes: document.getElementById("notes").value || null,
+        invoice_number: document.getElementById("invoiceNumber").value || null,
+      };
+
+      try {
+        const invoiceId = document.getElementById("invoiceId")?.value;
+        const url = invoiceId ? `/invoices/${invoiceId}` : "/invoices/new";
+        const method = invoiceId ? "PUT" : "POST";
+
+        const response = await fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          window.location.href = `/invoices/${data.id}`;
+        } else {
+          const error = await response.json();
+          alert("Error creating invoice: " + error.detail);
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("An error occurred");
+      }
+    });
+</script>
+{% endblock %}

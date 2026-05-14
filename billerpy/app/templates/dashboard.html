@@ -1,0 +1,259 @@
+{% extends "base.html" %} {% block title %}Dashboard{% endblock %} {% block
+content %}
+<!-- KPI Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+  <div
+    class="bg-white dark:bg-surface-dark p-5 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm"
+  >
+    <div class="flex justify-between items-start mb-4">
+      <div class="p-2 bg-blue-50 dark:bg-primary/10 rounded-lg text-primary">
+        <span class="material-icons-round">payments</span>
+      </div>
+      <span class="text-xs font-medium text-green-500 flex items-center">
+        <span class="material-icons-round text-xs">arrow_upward</span> 12.5%
+      </span>
+    </div>
+    <p
+      class="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider"
+    >
+      Total Revenue
+    </p>
+    <h3 class="text-2xl font-bold mt-1">₹{{ "%.2f"|format(total_revenue) }}</h3>
+  </div>
+  <div
+    class="bg-white dark:bg-surface-dark p-5 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm"
+  >
+    <div class="flex justify-between items-start mb-4">
+      <div
+        class="p-2 bg-amber-50 dark:bg-amber-500/10 rounded-lg text-amber-500"
+      >
+        <span class="material-icons-round">pending_actions</span>
+      </div>
+      <span class="text-xs font-medium text-slate-500 flex items-center">
+        vs last month
+      </span>
+    </div>
+    <p
+      class="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider"
+    >
+      Pending Payments
+    </p>
+    <h3 class="text-2xl font-bold mt-1 text-amber-500">
+      ₹{{ "%.2f"|format(pending_payments) }}
+    </h3>
+  </div>
+  <div
+    class="bg-white dark:bg-surface-dark p-5 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm"
+  >
+    <div class="flex justify-between items-start mb-4">
+      <div class="p-2 bg-rose-50 dark:bg-rose-500/10 rounded-lg text-rose-500">
+        <span class="material-icons-round">shopping_cart</span>
+      </div>
+      <span class="text-xs font-medium text-rose-500 flex items-center">
+        <span class="material-icons-round text-xs">arrow_upward</span> 4.2%
+      </span>
+    </div>
+    <p
+      class="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider"
+    >
+      Expenses
+    </p>
+    <h3 class="text-2xl font-bold mt-1">
+      ₹{{ "%.2f"|format(total_expenses) }}
+    </h3>
+  </div>
+  <div
+    class="bg-white dark:bg-surface-dark p-5 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm"
+  >
+    <div class="flex justify-between items-start mb-4">
+      <div
+        class="p-2 bg-green-50 dark:bg-green-500/10 rounded-lg text-green-500"
+      >
+        <span class="material-icons-round">account_balance_wallet</span>
+      </div>
+      <span class="text-xs font-medium text-green-500 flex items-center">
+        <span class="material-icons-round text-xs">arrow_upward</span> 18.2%
+      </span>
+    </div>
+    <p
+      class="text-sm font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider"
+    >
+      Net Profit
+    </p>
+    <h3 class="text-2xl font-bold mt-1 text-green-500">
+      ₹{{ "%.2f"|format(net_profit) }}
+    </h3>
+  </div>
+</div>
+
+<!-- Revenue Chart Section -->
+<div
+  class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm mb-8"
+>
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h2 class="text-lg font-bold">Monthly Revenue Trend</h2>
+      <p class="text-sm text-slate-500 dark:text-slate-400">
+        Analysis of earnings across the fiscal year
+      </p>
+    </div>
+    <div class="flex gap-2">
+      <button
+        class="px-3 py-1.5 text-xs font-semibold bg-slate-100 dark:bg-background-dark rounded-lg hover:bg-slate-200 transition-colors"
+      >
+        Export CSV
+      </button>
+      <button
+        class="px-3 py-1.5 text-xs font-semibold bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
+      >
+        Download Report
+      </button>
+    </div>
+  </div>
+  <div class="h-64 relative">
+    <!-- Real Data Chart Representation -->
+    <div class="absolute inset-0 flex items-end justify-between px-2">
+      {% for amount in monthly_revenue %} {% set height_percent = (amount /
+      max_revenue) * 100 if max_revenue > 0 else 0 %} {% set opacity = '10' if
+      height_percent < 20 else '40' if height_percent < 50 else '70' if
+      height_percent < 80 else '90' %}
+      <div
+        class="w-[6%] bg-primary/{{ opacity }} rounded-t-sm relative group"
+        {{ {'style': 'height: ' ~ ('%.2f'|format(height_percent)) ~ '%;'} | xmlattr }}
+      >
+        <div
+          class="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] px-2 py-1 rounded hidden group-hover:block z-10 whitespace-nowrap"
+        >
+          ₹{{ "%.0f"|format(amount) }}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div
+      class="absolute bottom-0 left-0 right-0 h-[1px] bg-slate-200 dark:bg-border-dark"
+    ></div>
+  </div>
+  <div class="flex justify-between mt-4 px-2">
+    <span class="text-[10px] text-slate-500 font-medium">JAN</span>
+    <span class="text-[10px] text-slate-500 font-medium">FEB</span>
+    <span class="text-[10px] text-slate-500 font-medium">MAR</span>
+    <span class="text-[10px] text-slate-500 font-medium">APR</span>
+    <span class="text-[10px] text-slate-500 font-medium">MAY</span>
+    <span class="text-[10px] text-slate-500 font-medium">JUN</span>
+    <span class="text-[10px] text-slate-500 font-medium">JUL</span>
+    <span class="text-[10px] text-slate-500 font-medium">AUG</span>
+    <span class="text-[10px] text-slate-500 font-medium">SEP</span>
+    <span class="text-[10px] text-slate-500 font-medium">OCT</span>
+    <span class="text-[10px] text-slate-500 font-medium">NOV</span>
+    <span class="text-[10px] text-slate-500 font-medium">DEC</span>
+  </div>
+</div>
+
+<!-- Main Data Grid -->
+<div class="flex flex-col lg:flex-row gap-8">
+  <!-- Recent Invoices Table -->
+  <div
+    class="flex-1 bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-border-dark shadow-sm overflow-hidden"
+  >
+    <div
+      class="p-6 border-b border-slate-200 dark:border-border-dark flex justify-between items-center"
+    >
+      <h2 class="font-bold">Recent Invoices</h2>
+      <a
+        href="/invoices"
+        class="text-primary text-sm font-semibold hover:underline"
+        >View All</a
+      >
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-slate-50 dark:bg-background-dark/50">
+            <th
+              class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider"
+            >
+              Invoice ID
+            </th>
+            <th
+              class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider"
+            >
+              Client
+            </th>
+            <th
+              class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider"
+            >
+              Amount
+            </th>
+            <th
+              class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider"
+            >
+              Due Date
+            </th>
+            <th
+              class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right"
+            >
+              Status
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 dark:divide-border-dark">
+          <!-- Dynamic content will go here -->
+          {% for invoice in invoices %}
+          <tr
+            class="hover:bg-slate-50 dark:hover:bg-background-dark/30 transition-colors"
+          >
+            <td class="px-6 py-4 text-sm font-semibold">
+              #INV-{{ invoice.id }}
+            </td>
+            <td class="px-6 py-4 text-sm">
+              {{ invoice.client.name if invoice.client else 'Unknown' }}
+            </td>
+            <td class="px-6 py-4 text-sm font-mono">
+              ₹{{ "%.2f"|format(invoice.amount) }}
+            </td>
+            <td class="px-6 py-4 text-sm text-slate-500">
+              {{ invoice.due_date }}
+            </td>
+            <td class="px-6 py-4 text-right">
+              <div class="flex items-center justify-end gap-3">
+                <a href="/invoices/{{ invoice.id }}" class="text-primary hover:text-primary/80 font-medium text-sm">View</a>
+                <span
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {% if invoice.status == 'Paid' %} bg-green-100 dark:bg-green-500/20 text-green-800 dark:text-green-400 {% elif invoice.status == 'Sent' %} bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-400 {% elif invoice.status == 'Overdue' %} bg-rose-100 dark:bg-rose-500/20 text-rose-800 dark:text-rose-400 {% else %} bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-300 {% endif %}"
+                  >{{ invoice.status.value }}</span
+                >
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+          <!-- Empty state -->
+          {% if not invoices %}
+          <tr>
+            <td colspan="5" class="px-6 py-4 text-center text-slate-500">
+              No recent invoices found.
+            </td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Quick Action Card -->
+  <div class="w-full lg:w-80 space-y-6">
+    <div
+      class="bg-primary p-6 rounded-xl shadow-lg shadow-primary/20 text-white"
+    >
+      <h3 class="font-bold text-lg mb-2">New Invoice</h3>
+      <p class="text-sm text-primary-100 opacity-90 mb-4 leading-relaxed">
+        Create a new billable item for your clients in seconds.
+      </p>
+      <a
+        href="/invoices/new"
+        class="block w-full text-center bg-white text-primary font-bold py-2.5 rounded-lg text-sm hover:bg-slate-100 transition-colors shadow-sm"
+      >
+        + Create Invoice
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}
