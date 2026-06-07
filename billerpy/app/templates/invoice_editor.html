@@ -460,7 +460,7 @@ content %}
       const billDate = document.getElementById("billDate").value;
       const dueDate = document.getElementById("dueDate").value;
 
-      if (!clientId || !billDate || !dueDate) {
+      if (!clientId || !billDate) {
         alert("Please fill in all required fields");
         return;
       }
@@ -486,7 +486,7 @@ content %}
         client_id: parseInt(clientId),
         amount: totalAmount,
         bill_date: billDate,
-        due_date: dueDate,
+        due_date: dueDate || null,
         status: "Draft",
         items_json: JSON.stringify(items),
         notes: document.getElementById("notes").value || null,

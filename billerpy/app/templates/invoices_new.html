@@ -417,7 +417,7 @@ content %}
       const clientId = document.getElementById("client").value;
       const dueDate = document.getElementById("dueDate").value;
 
-      if (!clientId || !dueDate) {
+      if (!clientId) {
         alert("Please fill in all required fields");
         return;
       }
@@ -440,7 +440,7 @@ content %}
       const data = {
         client_id: parseInt(clientId),
         amount: totalAmount,
-        due_date: dueDate,
+        due_date: dueDate || null,
         status: "Draft",
         items_json: JSON.stringify(items),
       };

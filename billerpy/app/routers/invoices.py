@@ -214,7 +214,7 @@ def update_invoice_details(
     id: int, 
     client_id: int = Body(...),
     amount: float = Body(...),
-    due_date: str = Body(...),
+    due_date: str = Body(None),
     bill_date: str = Body(None),
     db: Session = Depends(database.get_db)
 ):
@@ -229,10 +229,13 @@ def update_invoice_details(
     invoice.client_id = client_id
     invoice.amount = amount
     # Convert string date (YYYY-MM-DD) to python date object
-    if isinstance(due_date, str):
-        invoice.due_date = datetime.datetime.strptime(due_date, "%Y-%m-%d").date()
+    if due_date:
+        if isinstance(due_date, str):
+            invoice.due_date = datetime.datetime.strptime(due_date, "%Y-%m-%d").date()
+        else:
+            invoice.due_date = due_date
     else:
-        invoice.due_date = due_date
+        invoice.due_date = None
     
     apply_bill_date(invoice, bill_date)
     
