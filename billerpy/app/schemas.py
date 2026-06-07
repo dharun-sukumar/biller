@@ -36,6 +36,7 @@ class InvoiceBase(BaseModel):
     amount: float
     status: InvoiceStatus = InvoiceStatus.DRAFT
     due_date: date
+    bill_date: Optional[date] = None
     items_json: str = "[]"
     customer_gstin: Optional[str] = None
     notes: Optional[str] = None

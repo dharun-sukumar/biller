@@ -42,6 +42,15 @@ def is_invoice_number_unique(db: Session, invoice_number: str, exclude_id: int =
         query = query.filter(models.Invoice.id != exclude_id)
     return query.first() is None
 
+def apply_bill_date(invoice: models.Invoice, bill_date) -> None:
+    import datetime
+    if not bill_date:
+        return
+    if isinstance(bill_date, str):
+        bill_date = datetime.datetime.strptime(bill_date, "%Y-%m-%d").date()
+    existing_time = invoice.created_at.time() if invoice.created_at else datetime.datetime.utcnow().time()
+    invoice.created_at = datetime.datetime.combine(bill_date, existing_time)
+
 @router.get("/")
 def list_invoices(request: Request, db: Session = Depends(database.get_db)):
     invoices = db.query(models.Invoice).order_by(models.Invoice.id.desc()).all()
@@ -58,7 +67,6 @@ def list_invoices(request: Request, db: Session = Depends(database.get_db)):
 @router.get("/new")
 def new_invoice_form(request: Request, db: Session = Depends(database.get_db)):
     import datetime
-    today_date = datetime.date.today().isoformat()
     clients = db.query(models.Client).all()
     services = db.query(models.Service).all()
     company_settings = db.query(models.Settings).first()
@@ -66,11 +74,11 @@ def new_invoice_form(request: Request, db: Session = Depends(database.get_db)):
     return templates.TemplateResponse(request, "invoice_editor.html", {
         "request": request,
         "clients": clients,
-        "today_date": today_date,
         "services": services,
         "title": "New Invoice",
         "company_settings": company_settings,
-        "default_invoice_number": next_invoice_number
+        "default_invoice_number": next_invoice_number,
+        "bill_date": datetime.date.today().isoformat(),
     })
 
 @router.post("/new")
@@ -122,6 +130,7 @@ def create_invoice(invoice: schemas.InvoiceCreate, db: Session = Depends(databas
         qr_code_path=settings.qr_code_path,
         signature_path=settings.signature_path
     )
+    apply_bill_date(new_invoice, invoice.bill_date)
     db.add(new_invoice)
     db.commit()
     return JSONResponse(content={"message": "Invoice created successfully", "id": new_invoice.id})
@@ -206,6 +215,7 @@ def update_invoice_details(
     client_id: int = Body(...),
     amount: float = Body(...),
     due_date: str = Body(...),
+    bill_date: str = Body(None),
     db: Session = Depends(database.get_db)
 ):
     invoice = db.query(models.Invoice).filter(models.Invoice.id == id).first()
@@ -223,6 +233,8 @@ def update_invoice_details(
         invoice.due_date = datetime.datetime.strptime(due_date, "%Y-%m-%d").date()
     else:
         invoice.due_date = due_date
+    
+    apply_bill_date(invoice, bill_date)
     
     # Update snapshots if client changed? 
     # Usually snapshots are taken at creation, but if we change client, we might want to keep old snapshots 
@@ -260,6 +272,7 @@ def edit_invoice_form(id: int, request: Request, db: Session = Depends(database.
         "invoice": invoice,
         "clients": clients,
         "start_date": invoice.created_at.date().isoformat() if invoice.created_at else datetime.date.today().isoformat(),
+        "bill_date": invoice.created_at.date().isoformat() if invoice.created_at else datetime.date.today().isoformat(),
         "due_date": invoice.due_date.isoformat() if invoice.due_date and hasattr(invoice.due_date, 'isoformat') else (invoice.due_date if invoice.due_date else ""),
         "items": items,
         "services": services,
@@ -293,6 +306,7 @@ def edit_invoice_submit(id: int, invoice_update: schemas.InvoiceCreate, db: Sess
     invoice.customer_gstin = invoice_update.customer_gstin
     invoice.notes = invoice_update.notes
     invoice.invoice_number = invoice_update.invoice_number
+    apply_bill_date(invoice, invoice_update.bill_date)
     # Status usually remains Draft or whatever was passed, but usually we don't update status here 
     # unless user explicitly changes it. For now, we trust the form doesn't change status implicity 
     # OR we keep it as is. The schema has 'status', let's use it if user wants to change it via this form.
