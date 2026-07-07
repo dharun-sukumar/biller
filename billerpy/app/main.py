@@ -56,11 +56,21 @@ def run_migrations():
         if cols and "notes" not in cols:
             cursor.execute("ALTER TABLE invoices ADD COLUMN notes VARCHAR")
             
-        # Check clients for gstin
+        # Check clients for new columns
         cursor.execute("PRAGMA table_info(clients)")
         cols = [c[1] for c in cursor.fetchall()]
-        if cols and "gstin" not in cols:
-            cursor.execute("ALTER TABLE clients ADD COLUMN gstin VARCHAR")
+        if cols:
+            client_migrations = {
+                "gstin": "ALTER TABLE clients ADD COLUMN gstin VARCHAR",
+                "tan": "ALTER TABLE clients ADD COLUMN tan VARCHAR",
+                "pan": "ALTER TABLE clients ADD COLUMN pan VARCHAR",
+                "person_name": "ALTER TABLE clients ADD COLUMN person_name VARCHAR",
+                "pr_phone": "ALTER TABLE clients ADD COLUMN pr_phone VARCHAR",
+                "pr_mobile": "ALTER TABLE clients ADD COLUMN pr_mobile VARCHAR",
+            }
+            for col, sql in client_migrations.items():
+                if col not in cols:
+                    cursor.execute(sql)
             
         conn.commit()
         conn.close()

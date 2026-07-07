@@ -124,7 +124,7 @@
           <img
             src="{{ invoice.logo_path or settings.logo_path or '/static/logo.png' }}"
             alt="Logo"
-            class="10 object-contain mb-2"
+            class="h-16 w-auto max-w-[160px] object-contain mb-2 print:h-14 print:max-w-[130px]"
           />
           <div class="text-xs text-black font-medium leading-relaxed">
             {% set f_addr1 = invoice.from_address_line1 or
@@ -171,15 +171,25 @@
             </p>
             {% if invoice.client.email %}
             <p class="text-black">{{ invoice.client.email }}</p>
-            {% endif %} {% if invoice.client.phone %}
-            <p class="text-black">PH: {{ invoice.client.phone }}</p>
-            {% endif %} {% if invoice.client.address %}
+            {% endif %}
+            {% if invoice.client.address %}
             <div class="text-black">{{ invoice.client.address }}</div>
-            {% endif %} {% if invoice.client.gstin or invoice.customer_gstin %}
+            {% endif %}
+            {% if invoice.client.tan and invoice.client.tan != '-' %}
+            <p class="text-black">TAN: {{ invoice.client.tan|upper }}</p>
+            {% endif %}
+            {% if invoice.client.pan and invoice.client.pan != '-' and invoice.client.pan|upper != 'PANNOTREQD' %}
+            <p class="text-black">PAN: {{ invoice.client.pan|upper }}</p>
+            {% endif %}
+            {% if invoice.client.gstin or invoice.customer_gstin %}
             <p class="text-black">
               GSTIN: {{ (invoice.client.gstin or invoice.customer_gstin)|upper
               }}
             </p>
+            {% endif %}
+            {% set client_phone = invoice.client.pr_mobile or invoice.client.pr_phone or invoice.client.phone %}
+            {% if client_phone and client_phone != '-' %}
+            <p class="text-black">PH: {{ client_phone }}</p>
             {% endif %} {% else %}
             <p class="text-black">Client details not available</p>
             {% endif %}

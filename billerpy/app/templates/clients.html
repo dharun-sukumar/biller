@@ -1,6 +1,50 @@
 {% extends "base.html" %} {% block title %}Clients{% endblock %} {% block
 content %}
 <div class="flex flex-col gap-8">
+  {% if upload_result.error %}
+  <div class="bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/30 text-rose-700 dark:text-rose-300 px-4 py-3 rounded-lg text-sm">
+    {{ upload_result.error }}
+  </div>
+  {% elif upload_result.created %}
+  <div class="bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/30 text-green-700 dark:text-green-300 px-4 py-3 rounded-lg text-sm">
+    Imported {{ upload_result.created }} client(s){% if upload_result.skipped and upload_result.skipped != "0" %}, skipped {{ upload_result.skipped }} row(s){% endif %}.
+  </div>
+  {% endif %}
+
+  <!-- Bulk Upload -->
+  <div
+    class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm"
+  >
+    <h2 class="font-bold text-lg mb-4">Bulk Upload Clients</h2>
+    <form
+      action="/clients/bulk-upload"
+      method="post"
+      enctype="multipart/form-data"
+      class="flex flex-col sm:flex-row gap-4 items-start sm:items-end"
+    >
+      <div class="flex-1 w-full">
+        <label
+          class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+          >Excel File</label
+        >
+        <input
+          required
+          name="file"
+          type="file"
+          accept=".xlsx,.xlsm"
+          class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20"
+        />
+      </div>
+      <button
+        type="submit"
+        class="bg-slate-800 dark:bg-slate-700 text-white font-bold py-2.5 px-6 rounded-lg hover:bg-slate-700 dark:hover:bg-slate-600 transition-colors inline-flex items-center gap-2"
+      >
+        <span class="material-icons-round text-sm">upload_file</span>
+        Upload Clients
+      </button>
+    </form>
+  </div>
+
   <!-- Add Client Form (Collapsible or visible) -->
   <div
     class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm"
@@ -9,70 +53,51 @@ content %}
     <form
       action="/clients/new"
       method="post"
-      class="grid grid-cols-1 md:grid-cols-2 gap-4"
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"
     >
-      <div>
-        <label
-          class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
-          >Client Name</label
-        >
-        <input
-          required
-          name="name"
-          type="text"
-          class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary"
-        />
+      <div class="lg:col-span-2">
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Company Name</label>
+        <input required name="name" type="text"
+          class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary" />
+      </div>
+      <div class="lg:col-span-2">
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Person Name</label>
+        <input name="person_name" type="text"
+          class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary" />
       </div>
       <div>
-        <label
-          class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
-          >Email</label
-        >
-        <input
-          name="email"
-          type="email"
-          class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary"
-        />
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">TAN</label>
+        <input name="tan" type="text"
+          class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary uppercase" />
       </div>
       <div>
-        <label
-          class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
-          >Phone</label
-        >
-        <input
-          name="phone"
-          type="text"
-          class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary"
-        />
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">PAN</label>
+        <input name="pan" type="text"
+          class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary uppercase" />
       </div>
       <div>
-        <label
-          class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
-          >Address</label
-        >
-        <input
-          name="address"
-          type="text"
-          class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary"
-        />
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">GSTN No</label>
+        <input name="gstin" type="text"
+          class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary uppercase" />
       </div>
       <div>
-        <label
-          class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
-          >GSTIN</label
-        >
-        <input
-          name="gstin"
-          type="text"
-          placeholder="e.g., 27AABCT1234H1Z0"
-          class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary uppercase"
-        />
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Phone No</label>
+        <input name="phone" type="text"
+          class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary" />
       </div>
-      <div class="md:col-span-2 flex justify-end">
-        <button
-          type="submit"
-          class="bg-primary text-white font-bold py-2.5 px-6 rounded-lg hover:bg-primary/90 transition-colors"
-        >
+      <div>
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Pr Phone No</label>
+        <input name="pr_phone" type="text"
+          class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Pr Mobile No</label>
+        <input name="pr_mobile" type="text"
+          class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary" />
+      </div>
+      <div class="lg:col-span-4 flex justify-end">
+        <button type="submit"
+          class="bg-primary text-white font-bold py-2.5 px-6 rounded-lg hover:bg-primary/90 transition-colors">
           Add Client
         </button>
       </div>
@@ -90,147 +115,102 @@ content %}
       <table class="w-full text-left border-collapse" id="clientsTable">
         <thead>
           <tr class="bg-slate-50 dark:bg-background-dark/50">
-            <th
-              class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider"
-            >
-              ID
-            </th>
-            <th
-              class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider"
-            >
-              Name
-            </th>
-            <th
-              class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider"
-            >
-              Email
-            </th>
-            <th
-              class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider"
-            >
-              Phone
-            </th>
-            <th
-              class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider"
-            >
-              GSTIN
-            </th>
-
-            <th
-              class="px-6 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider"
-            >
-              Actions
-            </th>
+            <th class="px-4 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">ID</th>
+            <th class="px-4 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider min-w-[180px]">Company Name</th>
+            <th class="px-4 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider min-w-[140px]">Person Name</th>
+            <th class="px-4 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">TAN</th>
+            <th class="px-4 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">PAN</th>
+            <th class="px-4 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">GSTN No</th>
+            <th class="px-4 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Phone No</th>
+            <th class="px-4 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Pr Phone No</th>
+            <th class="px-4 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Pr Mobile No</th>
+            <th class="px-4 py-3 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100 dark:divide-border-dark">
           {% for client in clients %}
-          <tr
-            class="client-row hover:bg-slate-50 dark:hover:bg-background-dark/30 transition-colors"
-            data-name="{{ client.name }}"
-            id="row-{{ client.id }}"
-          >
-            <td class="px-6 py-4 text-sm font-semibold">#{{ client.id }}</td>
-            <td class="px-6 py-4 text-sm font-medium">
+          <tr class="client-row hover:bg-slate-50 dark:hover:bg-background-dark/30 transition-colors"
+            data-name="{{ client.name }}" id="row-{{ client.id }}">
+            <td class="px-4 py-4 text-sm font-semibold">#{{ client.id }}</td>
+            <td class="px-4 py-4 text-sm font-medium min-w-[180px]">
               <div class="view-mode">
-                <a
-                  href="/clients/{{ client.id }}"
-                  class="text-primary hover:underline"
-                  >{{ client.name }}</a
-                >
+                <a href="/clients/{{ client.id }}" class="text-primary hover:underline">{{ client.name }}</a>
               </div>
-              <div class="edit-mode hidden flex flex-col gap-3 min-w-[260px]">
-                <input
-                  required
-                  type="text"
-                  name="name"
-                  placeholder="Client Name"
-                  value="{{ client.name }}"
-                  form="form-{{ client.id }}"
-                  class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-white dark:bg-background-dark focus:ring-primary focus:border-primary text-sm px-3 py-2 shadow-sm transition-shadow"
-                />
-                <input
-                  type="text"
-                  name="address"
-                  placeholder="Address"
-                  title="Address"
-                  value="{{ client.address or '' }}"
-                  form="form-{{ client.id }}"
-                  class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-white dark:bg-background-dark focus:ring-primary focus:border-primary text-sm px-3 py-2 shadow-sm transition-shadow"
-                />
+              <div class="edit-mode hidden">
+                <input required type="text" name="name" value="{{ client.name }}" form="form-{{ client.id }}"
+                  class="w-full min-w-[160px] rounded-lg border-slate-200 dark:border-border-dark bg-white dark:bg-background-dark focus:ring-primary focus:border-primary text-sm px-3 py-2" />
               </div>
             </td>
-            <td class="px-6 py-4 text-sm text-slate-500">
-              <div class="view-mode">{{ client.email }}</div>
-              <div class="edit-mode hidden min-w-[220px]">
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Email"
-                  value="{{ client.email }}"
-                  form="form-{{ client.id }}"
-                  class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-white dark:bg-background-dark focus:ring-primary focus:border-primary text-sm px-3 py-2 shadow-sm transition-shadow"
-                />
+            <td class="px-4 py-4 text-sm text-slate-500 min-w-[140px]">
+              <div class="view-mode">{{ client.person_name or '-' }}</div>
+              <div class="edit-mode hidden">
+                <input type="text" name="person_name" value="{{ client.person_name or '' }}" form="form-{{ client.id }}"
+                  class="w-full min-w-[120px] rounded-lg border-slate-200 dark:border-border-dark bg-white dark:bg-background-dark focus:ring-primary focus:border-primary text-sm px-3 py-2" />
               </div>
             </td>
-            <td class="px-6 py-4 text-sm text-slate-500">
-              <div class="view-mode">{{ client.phone or '-' }}</div>
-              <div class="edit-mode hidden min-w-[160px]">
-                <input
-                  type="text"
-                  name="phone"
-                  placeholder="Phone"
-                  value="{{ client.phone or '' }}"
-                  form="form-{{ client.id }}"
-                  class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-white dark:bg-background-dark focus:ring-primary focus:border-primary text-sm px-3 py-2 shadow-sm transition-shadow"
-                />
+            <td class="px-4 py-4 text-sm text-slate-500">
+              <div class="view-mode">{{ client.tan or '-' }}</div>
+              <div class="edit-mode hidden">
+                <input type="text" name="tan" value="{{ client.tan or '' }}" form="form-{{ client.id }}"
+                  class="w-full min-w-[100px] rounded-lg border-slate-200 dark:border-border-dark bg-white dark:bg-background-dark focus:ring-primary focus:border-primary text-sm px-3 py-2 uppercase" />
               </div>
             </td>
-            <td class="px-6 py-4 text-sm text-slate-500">
+            <td class="px-4 py-4 text-sm text-slate-500">
+              <div class="view-mode">{{ client.pan or '-' }}</div>
+              <div class="edit-mode hidden">
+                <input type="text" name="pan" value="{{ client.pan or '' }}" form="form-{{ client.id }}"
+                  class="w-full min-w-[100px] rounded-lg border-slate-200 dark:border-border-dark bg-white dark:bg-background-dark focus:ring-primary focus:border-primary text-sm px-3 py-2 uppercase" />
+              </div>
+            </td>
+            <td class="px-4 py-4 text-sm text-slate-500">
               <div class="view-mode">{{ client.gstin or '-' }}</div>
-              <div class="edit-mode hidden min-w-[180px]">
-                <input
-                  type="text"
-                  name="gstin"
-                  placeholder="GSTIN"
-                  value="{{ client.gstin or '' }}"
-                  form="form-{{ client.id }}"
-                  class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-white dark:bg-background-dark focus:ring-primary focus:border-primary text-sm px-3 py-2 shadow-sm transition-shadow uppercase"
-                />
+              <div class="edit-mode hidden">
+                <input type="text" name="gstin" value="{{ client.gstin or '' }}" form="form-{{ client.id }}"
+                  class="w-full min-w-[120px] rounded-lg border-slate-200 dark:border-border-dark bg-white dark:bg-background-dark focus:ring-primary focus:border-primary text-sm px-3 py-2 uppercase" />
               </div>
             </td>
-
-            <td class="px-6 py-4 text-sm whitespace-nowrap">
-              <!-- Hidden form to handle the edit -->
-              <form
-                id="form-{{ client.id }}"
-                action="/clients/{{ client.id }}/edit"
-                method="post"
-                class="hidden"
-              ></form>
-
-              <div class="view-mode">
-                <button
-                  onclick="enableEdit('{{ client.id }}')"
-                  class="text-primary hover:text-primary/80 font-medium inline-flex items-center gap-1"
-                >
+            <td class="px-4 py-4 text-sm text-slate-500">
+              <div class="view-mode">{{ client.phone or '-' }}</div>
+              <div class="edit-mode hidden">
+                <input type="text" name="phone" value="{{ client.phone or '' }}" form="form-{{ client.id }}"
+                  class="w-full min-w-[110px] rounded-lg border-slate-200 dark:border-border-dark bg-white dark:bg-background-dark focus:ring-primary focus:border-primary text-sm px-3 py-2" />
+              </div>
+            </td>
+            <td class="px-4 py-4 text-sm text-slate-500">
+              <div class="view-mode">{{ client.pr_phone or '-' }}</div>
+              <div class="edit-mode hidden">
+                <input type="text" name="pr_phone" value="{{ client.pr_phone or '' }}" form="form-{{ client.id }}"
+                  class="w-full min-w-[110px] rounded-lg border-slate-200 dark:border-border-dark bg-white dark:bg-background-dark focus:ring-primary focus:border-primary text-sm px-3 py-2" />
+              </div>
+            </td>
+            <td class="px-4 py-4 text-sm text-slate-500">
+              <div class="view-mode">{{ client.pr_mobile or '-' }}</div>
+              <div class="edit-mode hidden">
+                <input type="text" name="pr_mobile" value="{{ client.pr_mobile or '' }}" form="form-{{ client.id }}"
+                  class="w-full min-w-[110px] rounded-lg border-slate-200 dark:border-border-dark bg-white dark:bg-background-dark focus:ring-primary focus:border-primary text-sm px-3 py-2" />
+              </div>
+            </td>
+            <td class="px-4 py-4 text-sm whitespace-nowrap">
+              <form id="form-{{ client.id }}" action="/clients/{{ client.id }}/edit" method="post" class="hidden"></form>
+              <div class="view-mode flex gap-2">
+                <a href="/clients/{{ client.id }}" class="text-slate-500 hover:text-primary font-medium inline-flex items-center gap-1">
+                  <span class="material-icons-round text-sm">visibility</span>
+                  View
+                </a>
+                <button onclick="enableEdit('{{ client.id }}')"
+                  class="text-primary hover:text-primary/80 font-medium inline-flex items-center gap-1">
                   <span class="material-icons-round text-sm">edit</span>
                   Edit
                 </button>
               </div>
               <div class="edit-mode hidden flex gap-2">
-                <button
-                  type="submit"
-                  form="form-{{ client.id }}"
-                  class="bg-primary text-white rounded px-3 py-1 text-xs font-bold hover:bg-primary/90 transition-colors inline-flex items-center gap-1"
-                >
+                <button type="submit" form="form-{{ client.id }}"
+                  class="bg-primary text-white rounded px-3 py-1 text-xs font-bold hover:bg-primary/90 transition-colors inline-flex items-center gap-1">
                   <span class="material-icons-round text-xs">save</span>
                   Save
                 </button>
-                <button
-                  onclick="disableEdit('{{ client.id }}')"
-                  class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded px-3 py-1 text-xs font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors inline-flex items-center gap-1"
-                >
+                <button onclick="disableEdit('{{ client.id }}')"
+                  class="bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded px-3 py-1 text-xs font-medium hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors inline-flex items-center gap-1">
                   <span class="material-icons-round text-xs">close</span>
                   Cancel
                 </button>
@@ -239,7 +219,7 @@ content %}
           </tr>
           {% endfor %} {% if not clients %}
           <tr id="noClientsRow">
-            <td colspan="6" class="px-6 py-4 text-center text-slate-500">
+            <td colspan="10" class="px-6 py-4 text-center text-slate-500">
               No clients found. Add one above.
             </td>
           </tr>
@@ -297,7 +277,7 @@ content %}
             const tr = document.createElement("tr");
             tr.id = "noClientsRow";
             tr.innerHTML =
-              '<td colspan="6" class="px-6 py-4 text-center text-slate-500">No matching clients found.</td>';
+              '<td colspan="10" class="px-6 py-4 text-center text-slate-500">No matching clients found.</td>';
             tbody.appendChild(tr);
           } else {
             noClientsRow.style.display = "";

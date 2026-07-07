@@ -27,28 +27,49 @@
                 <span class="material-icons-round">close</span>
             </button>
         </div>
-        <form action="/clients/{{ client.id }}/edit" method="post" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Client Name</label>
+        <form action="/clients/{{ client.id }}/edit" method="post" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <input type="hidden" name="redirect_to" value="/clients/{{ client.id }}" />
+            <div class="lg:col-span-2">
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Company Name</label>
                 <input required name="name" type="text" value="{{ client.name }}"
                     class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary">
             </div>
-            <div>
-                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Email</label>
-                <input required name="email" type="email" value="{{ client.email }}"
+            <div class="lg:col-span-2">
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Person Name</label>
+                <input name="person_name" type="text" value="{{ client.person_name or '' }}"
                     class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary">
             </div>
             <div>
-                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Phone</label>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">TAN</label>
+                <input name="tan" type="text" value="{{ client.tan or '' }}"
+                    class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary uppercase">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">PAN</label>
+                <input name="pan" type="text" value="{{ client.pan or '' }}"
+                    class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary uppercase">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">GSTN No</label>
+                <input name="gstin" type="text" value="{{ client.gstin or '' }}"
+                    class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary uppercase">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Phone No</label>
                 <input name="phone" type="text" value="{{ client.phone or '' }}"
                     class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary">
             </div>
             <div>
-                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Address</label>
-                <input name="address" type="text" value="{{ client.address or '' }}"
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Pr Phone No</label>
+                <input name="pr_phone" type="text" value="{{ client.pr_phone or '' }}"
                     class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary">
             </div>
-            <div class="md:col-span-2 flex justify-end gap-3">
+            <div>
+                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Pr Mobile No</label>
+                <input name="pr_mobile" type="text" value="{{ client.pr_mobile or '' }}"
+                    class="w-full rounded-lg border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-background-dark focus:ring-primary focus:border-primary">
+            </div>
+            <div class="lg:col-span-4 flex justify-end gap-3">
                 <button type="button" onclick="toggleEditForm()"
                     class="px-6 py-2.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors">Cancel</button>
                 <button type="submit"
@@ -60,19 +81,40 @@
     </div>
 
     <!-- Info Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div
-            class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm">
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Email Address</p>
-            <p class="font-semibold text-slate-800 dark:text-white">{{ client.email }}</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Company Name</p>
+            <p class="font-semibold text-slate-800 dark:text-white">{{ client.name }}</p>
         </div>
-        <div
-            class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm">
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Phone Number</p>
+        <div class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Person Name</p>
+            <p class="font-semibold text-slate-800 dark:text-white">{{ client.person_name or 'N/A' }}</p>
+        </div>
+        <div class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">TAN</p>
+            <p class="font-semibold text-slate-800 dark:text-white">{{ client.tan or 'N/A' }}</p>
+        </div>
+        <div class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">PAN</p>
+            <p class="font-semibold text-slate-800 dark:text-white">{{ client.pan or 'N/A' }}</p>
+        </div>
+        <div class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">GSTN No</p>
+            <p class="font-semibold text-slate-800 dark:text-white">{{ client.gstin or 'N/A' }}</p>
+        </div>
+        <div class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Phone No</p>
             <p class="font-semibold text-slate-800 dark:text-white">{{ client.phone or 'N/A' }}</p>
         </div>
-        <div
-            class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm">
+        <div class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Pr Phone No</p>
+            <p class="font-semibold text-slate-800 dark:text-white">{{ client.pr_phone or 'N/A' }}</p>
+        </div>
+        <div class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Pr Mobile No</p>
+            <p class="font-semibold text-slate-800 dark:text-white">{{ client.pr_mobile or 'N/A' }}</p>
+        </div>
+        <div class="bg-white dark:bg-surface-dark p-6 rounded-xl border border-slate-200 dark:border-border-dark shadow-sm">
             <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Total Invoices</p>
             <p class="font-semibold text-slate-800 dark:text-white">{{ invoices|length }}</p>
         </div>
